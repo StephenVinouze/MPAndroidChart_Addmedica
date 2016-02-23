@@ -90,29 +90,29 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
 
         mChart.getAxisRight().setEnabled(false);
 
-        int value = 30;
+        int numberOfDays = 100;
 
         ArrayList<String> xVals = new ArrayList<>();
-        for (int i = 0; i < value; i++) {
+        for (int i = 0; i < numberOfDays; i++) {
             xVals.add((i + 1) + "");
         }
 
-        float mult = value * 10f;
+        float mult = numberOfDays * 10f;
 
         ArrayList<BarEntry> yVals1 = new ArrayList<>();
-        for (int i = 0; i < value; i++) {
+        for (int i = 0; i < numberOfDays; i++) {
             float val = (float) (Math.random() * mult) + 3;
             yVals1.add(new BarEntry(val, i));
         }
 
         ArrayList<BarEntry> yVals2 = new ArrayList<>();
-        for (int i = 0; i < value; i++) {
+        for (int i = 0; i < numberOfDays; i++) {
             float val = (float) (Math.random() * mult) + 3;
             yVals2.add(new BarEntry(val, i));
         }
 
         ArrayList<BarEntry> yVals3 = new ArrayList<>();
-        for (int i = 0; i < value; i++) {
+        for (int i = 0; i < numberOfDays; i++) {
             float val = (float) (Math.random() * mult) + 3;
             yVals3.add(new BarEntry(val, i));
         }
@@ -139,6 +139,8 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
 
         mChart.setData(data);
         mChart.setVisibleXRange(4 * 7 - 1, 4 * 30 - 1);
+        mChart.zoom(numberOfDays/7, 1, 0, 0);
+        mChart.centerViewTo(mChart.getXChartMax(), 0, YAxis.AxisDependency.RIGHT);
     }
 
     private void save() {
@@ -222,8 +224,9 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
 
     @Override
     public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-        Log.d("scale", "scale x = " + scaleX);
-
+        if (mChart.getScaleX() <= 1.f) {
+            Log.d("scale", "switch to pie");
+        }
     }
 
     @Override
