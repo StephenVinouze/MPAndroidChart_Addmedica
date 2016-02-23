@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/actionToggleValues"
+        android:title="Toggle Values">
+    </item>
+    <item
+        android:id="@+id/animateY"
+        android:title="Animate Y">
+    </item>
+    <item
+        android:id="@+id/actionSave"
+        android:title="Save to Gallery">
+    </item>
+
+</menu>

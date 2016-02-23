@@ -17,6 +17,7 @@ import com.github.mikephil.charting.utils.Utils;
 import com.xxmassdeveloper.mpchartexample.AnotherBarActivity;
 import com.xxmassdeveloper.mpchartexample.BarChartActivity;
 import com.xxmassdeveloper.mpchartexample.BarChartActivityMultiDataset;
+import com.xxmassdeveloper.mpchartexample.BarChartActivityMultiDatasetWithPieSwitch;
 import com.xxmassdeveloper.mpchartexample.BarChartActivitySinus;
 import com.xxmassdeveloper.mpchartexample.BarChartPositiveNegative;
 import com.xxmassdeveloper.mpchartexample.BubbleChartActivity;
@@ -42,8 +43,6 @@ import com.xxmassdeveloper.mpchartexample.ScrollViewActivity;
 import com.xxmassdeveloper.mpchartexample.StackedBarActivity;
 import com.xxmassdeveloper.mpchartexample.StackedBarActivityNegative;
 import com.xxmassdeveloper.mpchartexample.fragments.SimpleChartDemo;
-import com.xxmassdeveloper.mpchartexample.realm.RealmDatabaseActivityBar;
-import com.xxmassdeveloper.mpchartexample.realm.RealmDatabaseActivityLine;
 import com.xxmassdeveloper.mpchartexample.realm.RealmMainActivity;
 
 import java.util.ArrayList;
@@ -68,6 +67,8 @@ public class MainActivity extends Activity implements OnItemClickListener {
         objects.add(new ContentItem("Line Chart (Dual YAxis)",
                 "Demonstration of the linechart with dual y-axis."));
         objects.add(new ContentItem("Bar Chart", "A simple demonstration of the bar chart."));
+        objects.add(new ContentItem("Multiple Bars Chart with Pie Chart switch",
+                "A bar chart with multiple DataSet objects. One multiple colors per DataSet."));
         objects.add(new ContentItem("Horizontal Bar Chart",
                 "A simple demonstration of the horizontal bar chart."));
         objects.add(new ContentItem("Combined Chart",
@@ -161,7 +162,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
                 startActivity(i);
                 break;
             case 3:
-                i = new Intent(this, HorizontalBarChartActivity.class);
+                i = new Intent(this, BarChartActivityMultiDatasetWithPieSwitch.class);
                 startActivity(i);
                 break;
             case 4:
@@ -258,6 +259,10 @@ public class MainActivity extends Activity implements OnItemClickListener {
                 break;
             case 27:
                 i = new Intent(this, RealmMainActivity.class);
+                startActivity(i);
+                break;
+            case 28:
+                i = new Intent(this, HorizontalBarChartActivity.class);
                 startActivity(i);
                 break;
         }
