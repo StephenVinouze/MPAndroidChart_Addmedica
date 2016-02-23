@@ -77,6 +77,9 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
 
         XAxis xl = mChart.getXAxis();
         xl.setTypeface(tf);
+        xl.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xl.setDrawGridLines(false);
+        xl.setDrawAxisLine(false);
 
         YAxis leftAxis = mChart.getAxisLeft();
         leftAxis.setTypeface(tf);
@@ -87,29 +90,28 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
 
         mChart.getAxisRight().setEnabled(false);
 
-        int value = 100;
+        int value = 30;
 
-        ArrayList<String> xVals = new ArrayList<String>();
+        ArrayList<String> xVals = new ArrayList<>();
         for (int i = 0; i < value; i++) {
-            xVals.add((i+1990) + "");
+            xVals.add((i + 1) + "");
         }
 
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
-        ArrayList<BarEntry> yVals2 = new ArrayList<BarEntry>();
-        ArrayList<BarEntry> yVals3 = new ArrayList<BarEntry>();
+        float mult = value * 10f;
 
-        float mult = value * 1000f;
-
+        ArrayList<BarEntry> yVals1 = new ArrayList<>();
         for (int i = 0; i < value; i++) {
             float val = (float) (Math.random() * mult) + 3;
             yVals1.add(new BarEntry(val, i));
         }
 
+        ArrayList<BarEntry> yVals2 = new ArrayList<>();
         for (int i = 0; i < value; i++) {
             float val = (float) (Math.random() * mult) + 3;
             yVals2.add(new BarEntry(val, i));
         }
 
+        ArrayList<BarEntry> yVals3 = new ArrayList<>();
         for (int i = 0; i < value; i++) {
             float val = (float) (Math.random() * mult) + 3;
             yVals3.add(new BarEntry(val, i));
@@ -136,7 +138,7 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
         data.setValueTypeface(tf);
 
         mChart.setData(data);
-        mChart.invalidate();
+        mChart.setVisibleXRange(4 * 7 - 1, 4 * 30 - 1);
     }
 
     private void save() {
@@ -221,6 +223,7 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
     @Override
     public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
         Log.d("scale", "scale x = " + scaleX);
+
     }
 
     @Override
