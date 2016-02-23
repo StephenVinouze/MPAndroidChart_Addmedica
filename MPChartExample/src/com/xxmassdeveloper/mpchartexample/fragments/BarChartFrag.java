@@ -102,7 +102,17 @@ public class BarChartFrag extends SimpleFragment implements OnChartGestureListen
         Log.i("Scale / Zoom", "ScaleX: " + scaleX + ", ScaleY: " + scaleY);
     }
 
-	@Override
+    @Override
+    public void onChartMinScale(MotionEvent me, ChartTouchListener.ChartGesture gesture) {
+
+    }
+
+    @Override
+    public void onChartMaxScale(MotionEvent me, ChartTouchListener.ChartGesture gesture) {
+
+    }
+
+    @Override
 	public void onChartTranslate(MotionEvent me, float dX, float dY) {
 		Log.i("Translate / Move", "dX: " + dX + ", dY: " + dY);
 	}

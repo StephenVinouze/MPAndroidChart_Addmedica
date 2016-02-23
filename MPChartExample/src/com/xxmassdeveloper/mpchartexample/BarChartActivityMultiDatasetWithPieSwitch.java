@@ -37,6 +37,7 @@ import java.util.ArrayList;
 public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implements OnChartValueSelectedListener, OnChartGestureListener {
 
     private static final int WRITE_STORAGE_PERMISSION_CODE = 110;
+    private static final int NUMBER_OF_DAYS = 100;
 
     private BarChart mChart;
 
@@ -90,29 +91,27 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
 
         mChart.getAxisRight().setEnabled(false);
 
-        int numberOfDays = 100;
-
         ArrayList<String> xVals = new ArrayList<>();
-        for (int i = 0; i < numberOfDays; i++) {
+        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             xVals.add((i + 1) + "");
         }
 
-        float mult = numberOfDays * 10f;
+        float mult = NUMBER_OF_DAYS * 10f;
 
         ArrayList<BarEntry> yVals1 = new ArrayList<>();
-        for (int i = 0; i < numberOfDays; i++) {
+        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             float val = (float) (Math.random() * mult) + 3;
             yVals1.add(new BarEntry(val, i));
         }
 
         ArrayList<BarEntry> yVals2 = new ArrayList<>();
-        for (int i = 0; i < numberOfDays; i++) {
+        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             float val = (float) (Math.random() * mult) + 3;
             yVals2.add(new BarEntry(val, i));
         }
 
         ArrayList<BarEntry> yVals3 = new ArrayList<>();
-        for (int i = 0; i < numberOfDays; i++) {
+        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             float val = (float) (Math.random() * mult) + 3;
             yVals3.add(new BarEntry(val, i));
         }
@@ -139,7 +138,7 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
 
         mChart.setData(data);
         mChart.setVisibleXRange(4 * 7 - 1, 4 * 30 - 1);
-        mChart.zoom(numberOfDays/7, 1, 0, 0);
+        mChart.zoom(NUMBER_OF_DAYS / 7, 1, 0, 0);
         mChart.centerViewTo(mChart.getXChartMax(), 0, YAxis.AxisDependency.RIGHT);
     }
 
@@ -223,10 +222,17 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
     public void onChartFling(MotionEvent me1, MotionEvent me2, float velocityX, float velocityY) {}
 
     @Override
-    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {
-        if (mChart.getScaleX() <= 1.f) {
+    public void onChartScale(MotionEvent me, float scaleX, float scaleY) {}
+
+    @Override
+    public void onChartMinScale(MotionEvent me, ChartTouchListener.ChartGesture gesture) {
+
+    }
+
+    @Override
+    public void onChartMaxScale(MotionEvent me, ChartTouchListener.ChartGesture gesture) {
+        if (gesture == ChartTouchListener.ChartGesture.X_ZOOM)
             Log.d("scale", "switch to pie");
-        }
     }
 
     @Override

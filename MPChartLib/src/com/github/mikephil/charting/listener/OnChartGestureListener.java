@@ -66,6 +66,22 @@ public interface OnChartGestureListener {
     void onChartScale(MotionEvent me, float scaleX, float scaleY);
 
     /**
+     * Callback when min scale is reached in at least one of the axis
+     *
+     * @param me
+     * @param gesture the gesture that has reached its minimum. Can be either PINCH_ZOOM, X_ZOOM or Y_ZOOM
+     */
+    void onChartMinScale(MotionEvent me, ChartTouchListener.ChartGesture gesture);
+
+    /**
+     * Callback when max scale is reached in at least one of the axis
+     *
+     * @param me
+     * @param gesture the gesture that has reached its minimum. Can be either PINCH_ZOOM, X_ZOOM or Y_ZOOM
+     */
+    void onChartMaxScale(MotionEvent me, ChartTouchListener.ChartGesture gesture);
+
+    /**
      * Callbacks when the chart is moved / translated via drag gesture.
      *
      * @param me

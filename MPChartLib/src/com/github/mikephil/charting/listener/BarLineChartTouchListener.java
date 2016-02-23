@@ -307,6 +307,8 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
                 // get the translation
                 PointF t = getTrans(mTouchPointCenter.x, mTouchPointCenter.y);
 
+                ViewPortHandler portHandler = mChart.getViewPortHandler();
+
                 // take actions depending on the activated touch
                 // mode
                 if (mTouchMode == PINCH_ZOOM) {
@@ -316,20 +318,27 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
                     float scale = totalDist / mSavedDist; // total scale
 
                     boolean isZoomingOut = (scale < 1);
-                    boolean canZoomMoreX = isZoomingOut ?
-                            mChart.getViewPortHandler().canZoomOutMoreX() :
-                            mChart.getViewPortHandler().canZoomInMoreX();
+                    boolean canZoomMoreX = isZoomingOut ? portHandler.canZoomOutMoreX() : portHandler.canZoomInMoreX();
 
-                    float scaleX = (mChart.isScaleXEnabled()) ? scale : 1f;
-                    float scaleY = (mChart.isScaleYEnabled()) ? scale : 1f;
+                    if (canZoomMoreX) {
 
-                    if (mChart.isScaleYEnabled() || canZoomMoreX) {
+                        float scaleX = (mChart.isScaleXEnabled()) ? scale : 1f;
+                        float scaleY = (mChart.isScaleYEnabled()) ? scale : 1f;
 
-                        mMatrix.set(mSavedMatrix);
-                        mMatrix.postScale(scaleX, scaleY, t.x, t.y);
+                        if (mChart.isScaleXEnabled()) {
+                            mMatrix.set(mSavedMatrix);
+                            mMatrix.postScale(scaleX, scaleY, t.x, t.y);
 
-                        if (l != null)
-                            l.onChartScale(event, scaleX, scaleY);
+                            if (l != null)
+                                l.onChartScale(event, scaleX, scaleY);
+                        }
+                    } else {
+                        if (l != null) {
+                            if (!portHandler.canZoomInMoreX())
+                                l.onChartMinScale(event, mLastGesture);
+                            else if (!portHandler.canZoomOutMoreX())
+                                l.onChartMaxScale(event, mLastGesture);
+                        }
                     }
 
                 } else if (mTouchMode == X_ZOOM && mChart.isScaleXEnabled()) {
@@ -340,9 +349,7 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
                     float scaleX = xDist / mSavedXDist; // x-axis scale
 
                     boolean isZoomingOut = (scaleX < 1);
-                    boolean canZoomMoreX = isZoomingOut ?
-                            mChart.getViewPortHandler().canZoomOutMoreX() :
-                            mChart.getViewPortHandler().canZoomInMoreX();
+                    boolean canZoomMoreX = isZoomingOut ? portHandler.canZoomOutMoreX() : portHandler.canZoomInMoreX();
 
                     if (canZoomMoreX) {
 
@@ -351,6 +358,13 @@ public class BarLineChartTouchListener extends ChartTouchListener<BarLineChartBa
 
                         if (l != null)
                             l.onChartScale(event, scaleX, 1f);
+                    } else {
+                        if (l != null) {
+                            if (!portHandler.canZoomInMoreX())
+                                l.onChartMinScale(event, mLastGesture);
+                            else if (!portHandler.canZoomOutMoreX())
+                                l.onChartMaxScale(event, mLastGesture);
+                        }
                     }
 
                 } else if (mTouchMode == Y_ZOOM && mChart.isScaleYEnabled()) {
