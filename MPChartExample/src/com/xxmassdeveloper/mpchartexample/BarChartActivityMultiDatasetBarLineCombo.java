@@ -44,6 +44,9 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     private static final int WRITE_STORAGE_PERMISSION_CODE = 110;
     private static final int NUMBER_OF_DAYS = 100;
+    private static final int DAYS_PER_MONTH = 30;
+    private static final int DAYS_PER_WEEK = 7;
+    private static final int SETS = 3;
 
     private BarChart mBarChart;
     private LineChart mLineChart;
@@ -65,8 +68,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         configureYAxis(mBarChart.getAxisLeft());
 
         mBarChart.setData(generateBarData());
-        mBarChart.setVisibleXRange(4 * 7 - 1, 4 * 30 - 1);
-        mBarChart.zoom(NUMBER_OF_DAYS / 7, 1, 0, 0);
+        mBarChart.setVisibleXRange((SETS + 1) * DAYS_PER_WEEK - 1, (SETS + 1) * DAYS_PER_MONTH - 1);
+        mBarChart.zoom(NUMBER_OF_DAYS / DAYS_PER_WEEK, 1, 0, 0);
         mBarChart.centerViewTo(mBarChart.getXChartMax(), 0, YAxis.AxisDependency.LEFT);
 
         mLineChart = (LineChart) findViewById(R.id.line_chart);
@@ -76,8 +79,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         configureYAxis(mLineChart.getAxisLeft());
 
         mLineChart.setData(generateLineData());
-        mLineChart.setVisibleXRange(4 * 7 - 1, 4 * 30 - 1);
-        mLineChart.zoom(NUMBER_OF_DAYS / 7, 1, 0, 0);
+        mLineChart.setVisibleXRange(DAYS_PER_MONTH, DAYS_PER_MONTH * 2);
+        mLineChart.zoom(NUMBER_OF_DAYS / DAYS_PER_WEEK, 1, 0, 0);
         mLineChart.centerViewTo(mLineChart.getXChartMax(), 0, YAxis.AxisDependency.LEFT);
 
         showBarChart();
@@ -89,6 +92,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         chart.setScaleXEnabled(true);
         chart.setScaleYEnabled(false);
         chart.setDrawGridBackground(false);
+        chart.setDrawBorders(false);
         chart.getAxisRight().setEnabled(false);
         chart.setOnChartGestureListener(this);
         chart.setOnChartValueSelectedListener(this);
@@ -106,7 +110,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
     private void configureYAxis(YAxis axis) {
         axis.setTypeface(tf);
         axis.setValueFormatter(new LargeValueFormatter());
-        axis.setDrawGridLines(false);
+        axis.setDrawGridLines(true);
+        axis.setDrawAxisLine(false);
         axis.setSpaceTop(30f);
         axis.setAxisMinValue(0f);
     }
@@ -195,9 +200,9 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         if (!isSwitching && fromChart.getAlpha() == 1) {
             isSwitching = true;
             fromChart.setAlpha(0);
-            toChart.setAlpha(1);
             toChart.centerViewTo((fromChart.getLowestVisibleXIndex() + fromChart.getHighestVisibleXIndex()) / 2, 0, YAxis.AxisDependency.LEFT);
             toChart.bringToFront();
+            toChart.animate().alpha(1).setDuration(500);
             return true;
         }
         return false;
@@ -260,7 +265,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case WRITE_STORAGE_PERMISSION_CODE: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     save();
                 }
