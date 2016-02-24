@@ -70,7 +70,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         mBarChart.setData(generateBarData());
         mBarChart.setVisibleXRange((SETS + 1) * DAYS_PER_WEEK - 1, (SETS + 1) * DAYS_PER_MONTH - 1);
         mBarChart.zoom(NUMBER_OF_DAYS / DAYS_PER_WEEK, 1, 0, 0);
-        mBarChart.centerViewTo(mBarChart.getXChartMax(), 0, YAxis.AxisDependency.LEFT);
 
         mLineChart = (LineChart) findViewById(R.id.line_chart);
         configureChart(mLineChart);
@@ -80,10 +79,11 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
         mLineChart.setData(generateLineData());
         mLineChart.setVisibleXRange(DAYS_PER_MONTH, DAYS_PER_MONTH * 2);
-        mLineChart.zoom(NUMBER_OF_DAYS / DAYS_PER_WEEK, 1, 0, 0);
-        mLineChart.centerViewTo(mLineChart.getXChartMax(), 0, YAxis.AxisDependency.LEFT);
+        mLineChart.zoom(NUMBER_OF_DAYS / DAYS_PER_MONTH, 1, 0, 0);
 
         showBarChart();
+
+        mBarChart.moveViewToX(mBarChart.getXChartMax());
     }
 
     @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB)
@@ -168,8 +168,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         dataSets.add(set3);
 
         LineData data = new LineData(getXvals(), dataSets);
-        data.setValueFormatter(new LargeValueFormatter());
-        data.setValueTypeface(tf);
+        data.setDrawValues(false);
 
         return data;
     }
@@ -188,9 +187,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         dataSets.add(set3);
 
         BarData data = new BarData(getXvals(), dataSets);
-        data.setValueFormatter(new LargeValueFormatter());
         data.setGroupSpace(80f);
-        data.setValueTypeface(tf);
+        data.setDrawValues(false);
 
         return data;
     }
@@ -200,7 +198,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         if (!isSwitching && fromChart.getAlpha() == 1) {
             isSwitching = true;
             fromChart.setAlpha(0);
-            toChart.centerViewTo((fromChart.getLowestVisibleXIndex() + fromChart.getHighestVisibleXIndex()) / 2, 0, YAxis.AxisDependency.LEFT);
             toChart.bringToFront();
             toChart.animate().alpha(1).setDuration(500);
             return true;
@@ -210,6 +207,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     private void showBarChart() {
         if (switchChart(mLineChart, mBarChart)) {
+            mBarChart.moveViewToX((SETS + 1) * mLineChart.getLowestVisibleXIndex() - 1);
             mBarChart.animateY(500);
             isSwitching = false;
         }
@@ -217,6 +215,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     private void showLineChart() {
         if (switchChart(mBarChart, mLineChart)) {
+            mLineChart.moveViewToX(mBarChart.getLowestVisibleXIndex());
             mLineChart.animateX(1000);
             isSwitching = false;
         }
