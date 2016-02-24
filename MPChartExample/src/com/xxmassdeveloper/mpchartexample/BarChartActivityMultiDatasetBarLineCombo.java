@@ -2,6 +2,7 @@
 package com.xxmassdeveloper.mpchartexample;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
@@ -15,6 +16,8 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.BarLineChartBase;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.Legend.LegendPosition;
 import com.github.mikephil.charting.components.XAxis;
@@ -23,13 +26,15 @@ import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.xxmassdeveloper.mpchartexample.custom.MyMarkerView;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;
@@ -41,7 +46,9 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
     private static final int NUMBER_OF_DAYS = 100;
 
     private BarChart mBarChart;
+    private LineChart mLineChart;
     private Typeface tf;
+    private boolean isSwitching;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,54 +56,69 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_multiset_bar_line_combo);
 
-        mBarChart = (BarChart) findViewById(R.id.bar_chart);
-        mBarChart.setOnChartValueSelectedListener(this);
-        mBarChart.setDescription("");
-        mBarChart.setPinchZoom(false);
-        mBarChart.setScaleYEnabled(false);
-        mBarChart.setDrawBarShadow(false);
-        mBarChart.setDrawGridBackground(false);
-        mBarChart.setOnChartGestureListener(this);
-
-        // create a custom MarkerView (extend MarkerView) and specify the layout
-        // to use for it
-        MyMarkerView mv = new MyMarkerView(this, R.layout.custom_marker_view);
-
-        // define an offset to change the original position of the marker
-        // (optional)
-        // mv.setOffsets(-mv.getMeasuredWidth() / 2, -mv.getMeasuredHeight());
-
-        // set the marker to the chart
-        mBarChart.setMarkerView(mv);
-
         tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
 
-        Legend l = mBarChart.getLegend();
-        l.setPosition(LegendPosition.RIGHT_OF_CHART_INSIDE);
-        l.setTypeface(tf);
-        l.setYOffset(0f);
-        l.setYEntrySpace(0f);
-        l.setTextSize(8f);
-
-        XAxis xl = mBarChart.getXAxis();
-        xl.setTypeface(tf);
-        xl.setPosition(XAxis.XAxisPosition.BOTTOM);
-/*        xl.setDrawGridLines(false);
-        xl.setDrawAxisLine(false);*/
-
-        YAxis leftAxis = mBarChart.getAxisLeft();
-        leftAxis.setTypeface(tf);
-        leftAxis.setValueFormatter(new LargeValueFormatter());
-        leftAxis.setDrawGridLines(false);
-        leftAxis.setSpaceTop(30f);
-        leftAxis.setAxisMinValue(0f); // this replaces setStartAtZero(true)
-
-        mBarChart.getAxisRight().setEnabled(false);
+        mBarChart = (BarChart) findViewById(R.id.bar_chart);
+        configureChart(mBarChart);
+        configureLegend(mBarChart.getLegend());
+        configureXAxis(mBarChart.getXAxis());
+        configureYAxis(mBarChart.getAxisLeft());
 
         mBarChart.setData(generateBarData());
         mBarChart.setVisibleXRange(4 * 7 - 1, 4 * 30 - 1);
         mBarChart.zoom(NUMBER_OF_DAYS / 7, 1, 0, 0);
         mBarChart.centerViewTo(mBarChart.getXChartMax(), 0, YAxis.AxisDependency.LEFT);
+
+        mLineChart = (LineChart) findViewById(R.id.line_chart);
+        configureChart(mLineChart);
+        configureLegend(mLineChart.getLegend());
+        configureXAxis(mLineChart.getXAxis());
+        configureYAxis(mLineChart.getAxisLeft());
+
+        mLineChart.setData(generateLineData());
+        mLineChart.setVisibleXRange(4 * 7 - 1, 4 * 30 - 1);
+        mLineChart.zoom(NUMBER_OF_DAYS / 7, 1, 0, 0);
+        mLineChart.centerViewTo(mLineChart.getXChartMax(), 0, YAxis.AxisDependency.LEFT);
+
+        showBarChart();
+    }
+
+    @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB)
+    private BarLineChartBase configureChart(BarLineChartBase chart) {
+        chart.setDescription("");
+        chart.setScaleXEnabled(true);
+        chart.setScaleYEnabled(false);
+        chart.setDrawGridBackground(false);
+        chart.getAxisRight().setEnabled(false);
+        chart.setOnChartGestureListener(this);
+        chart.setOnChartValueSelectedListener(this);
+
+        return chart;
+    }
+
+    private void configureXAxis(XAxis axis) {
+        axis.setTypeface(tf);
+        axis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        axis.setDrawGridLines(false);
+        axis.setDrawAxisLine(false);
+    }
+
+    private void configureYAxis(YAxis axis) {
+        axis.setTypeface(tf);
+        axis.setValueFormatter(new LargeValueFormatter());
+        axis.setDrawGridLines(false);
+        axis.setSpaceTop(30f);
+        axis.setAxisMinValue(0f);
+    }
+
+    private void configureLegend(Legend legend) {
+        legend.setPosition(LegendPosition.ABOVE_CHART_RIGHT);
+        legend.setTypeface(tf);
+        legend.setYOffset(0f);
+        legend.setYEntrySpace(0f);
+        legend.setXEntrySpace(10f);
+        legend.setTextSize(15f);
+        legend.setFormSize(15f);
     }
 
     private int getRandom(int range, int startsfrom) {
@@ -127,7 +149,27 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         return entries;
     }
 
-    private List<IBarDataSet> getBarDataSet() {
+    private LineData generateLineData() {
+        LineDataSet set1 = new LineDataSet(getLineEntries(), "Effort");
+        set1.setColor(Color.rgb(104, 241, 175));
+        LineDataSet set2 = new LineDataSet(getLineEntries(), "Fatigue");
+        set2.setColor(Color.rgb(164, 228, 251));
+        LineDataSet set3 = new LineDataSet(getLineEntries(), "Douleur");
+        set3.setColor(Color.rgb(242, 247, 158));
+
+        List<ILineDataSet> dataSets = new ArrayList<>();
+        dataSets.add(set1);
+        dataSets.add(set2);
+        dataSets.add(set3);
+
+        LineData data = new LineData(getXvals(), dataSets);
+        data.setValueFormatter(new LargeValueFormatter());
+        data.setValueTypeface(tf);
+
+        return data;
+    }
+
+    private BarData generateBarData() {
         BarDataSet set1 = new BarDataSet(getBarEntries(), "Effort");
         set1.setColor(Color.rgb(104, 241, 175));
         BarDataSet set2 = new BarDataSet(getBarEntries(), "Fatigue");
@@ -140,16 +182,39 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         dataSets.add(set2);
         dataSets.add(set3);
 
-        return dataSets;
-    }
-
-    private BarData generateBarData() {
-        BarData data = new BarData(getXvals(), getBarDataSet());
+        BarData data = new BarData(getXvals(), dataSets);
         data.setValueFormatter(new LargeValueFormatter());
         data.setGroupSpace(80f);
         data.setValueTypeface(tf);
 
         return data;
+    }
+
+    @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB_MR1)
+    private boolean switchChart(BarLineChartBase fromChart, BarLineChartBase toChart) {
+        if (!isSwitching && fromChart.getAlpha() == 1) {
+            isSwitching = true;
+            fromChart.setAlpha(0);
+            toChart.setAlpha(1);
+            toChart.centerViewTo((fromChart.getLowestVisibleXIndex() + fromChart.getHighestVisibleXIndex()) / 2, 0, YAxis.AxisDependency.LEFT);
+            toChart.bringToFront();
+            return true;
+        }
+        return false;
+    }
+
+    private void showBarChart() {
+        if (switchChart(mLineChart, mBarChart)) {
+            mBarChart.animateY(500);
+            isSwitching = false;
+        }
+    }
+
+    private void showLineChart() {
+        if (switchChart(mBarChart, mLineChart)) {
+            mLineChart.animateX(1000);
+            isSwitching = false;
+        }
     }
 
     private void save() {
@@ -166,13 +231,17 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-/*            case R.id.actionToggleValues: {
+            case R.id.actionToggleValues: {
                 for (IBarDataSet set : mBarChart.getData().getDataSets())
                     set.setDrawValues(!set.isDrawValuesEnabled());
 
                 mBarChart.invalidate();
                 break;
-            }*/
+            }
+            case R.id.animateX: {
+                mLineChart.animateX(3000);
+                break;
+            }
             case R.id.actionSave: {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_CODE);
@@ -181,10 +250,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
                     save();
                 }
 
-                break;
-            }
-            case R.id.animateY: {
-                mBarChart.animateY(1000);
                 break;
             }
         }
@@ -236,13 +301,16 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     @Override
     public void onChartMinScale(MotionEvent me, ChartTouchListener.ChartGesture gesture) {
-
+        if (gesture == ChartTouchListener.ChartGesture.X_ZOOM) {
+            showBarChart();
+        }
     }
 
     @Override
     public void onChartMaxScale(MotionEvent me, ChartTouchListener.ChartGesture gesture) {
-        if (gesture == ChartTouchListener.ChartGesture.X_ZOOM)
-            Log.d("scale", "switch to pie");
+        if (gesture == ChartTouchListener.ChartGesture.X_ZOOM) {
+            showLineChart();
+        }
     }
 
     @Override

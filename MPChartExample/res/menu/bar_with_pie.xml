@@ -6,8 +6,8 @@
         android:title="Toggle Values">
     </item>
     <item
-        android:id="@+id/animateY"
-        android:title="Animate Y">
+        android:id="@+id/animateX"
+        android:title="Animate X">
     </item>
     <item
         android:id="@+id/actionSave"
