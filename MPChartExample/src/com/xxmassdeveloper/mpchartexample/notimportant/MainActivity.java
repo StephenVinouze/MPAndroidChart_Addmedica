@@ -17,7 +17,7 @@ import com.github.mikephil.charting.utils.Utils;
 import com.xxmassdeveloper.mpchartexample.AnotherBarActivity;
 import com.xxmassdeveloper.mpchartexample.BarChartActivity;
 import com.xxmassdeveloper.mpchartexample.BarChartActivityMultiDataset;
-import com.xxmassdeveloper.mpchartexample.BarChartActivityMultiDatasetWithPieSwitch;
+import com.xxmassdeveloper.mpchartexample.BarChartActivityMultiDatasetBarLineCombo;
 import com.xxmassdeveloper.mpchartexample.BarChartActivitySinus;
 import com.xxmassdeveloper.mpchartexample.BarChartPositiveNegative;
 import com.xxmassdeveloper.mpchartexample.BubbleChartActivity;
@@ -162,7 +162,7 @@ public class MainActivity extends Activity implements OnItemClickListener {
                 startActivity(i);
                 break;
             case 3:
-                i = new Intent(this, BarChartActivityMultiDatasetWithPieSwitch.class);
+                i = new Intent(this, BarChartActivityMultiDatasetBarLineCombo.class);
                 startActivity(i);
                 break;
             case 4:

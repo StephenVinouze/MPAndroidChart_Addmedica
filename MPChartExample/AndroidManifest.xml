@@ -31,7 +31,7 @@
         <activity android:name="PieChartActivity"></activity>
         <activity android:name="MultiLineChartActivity"></activity>
         <activity android:name="BarChartActivityMultiDataset"></activity>
-        <activity android:name="BarChartActivityMultiDatasetWithPieSwitch"></activity>
+        <activity android:name=".BarChartActivityMultiDatasetBarLineCombo"></activity>
         <activity android:name="DrawChartActivity"></activity>
         <activity android:name="ScatterChartActivity"></activity>
         <activity android:name="BubbleChartActivity"></activity>

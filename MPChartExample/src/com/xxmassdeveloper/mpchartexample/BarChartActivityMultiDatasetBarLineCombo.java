@@ -33,28 +33,30 @@ import com.xxmassdeveloper.mpchartexample.custom.MyMarkerView;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implements OnChartValueSelectedListener, OnChartGestureListener {
+public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implements OnChartValueSelectedListener, OnChartGestureListener {
 
     private static final int WRITE_STORAGE_PERMISSION_CODE = 110;
     private static final int NUMBER_OF_DAYS = 100;
 
-    private BarChart mChart;
+    private BarChart mBarChart;
+    private Typeface tf;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.activity_barchart_noseekbar);
+        setContentView(R.layout.activity_multiset_bar_line_combo);
 
-        mChart = (BarChart) findViewById(R.id.chart1);
-        mChart.setOnChartValueSelectedListener(this);
-        mChart.setDescription("");
-        mChart.setPinchZoom(false);
-        mChart.setScaleYEnabled(false);
-        mChart.setDrawBarShadow(false);
-        mChart.setDrawGridBackground(false);
-        mChart.setOnChartGestureListener(this);
+        mBarChart = (BarChart) findViewById(R.id.bar_chart);
+        mBarChart.setOnChartValueSelectedListener(this);
+        mBarChart.setDescription("");
+        mBarChart.setPinchZoom(false);
+        mBarChart.setScaleYEnabled(false);
+        mBarChart.setDrawBarShadow(false);
+        mBarChart.setDrawGridBackground(false);
+        mBarChart.setOnChartGestureListener(this);
 
         // create a custom MarkerView (extend MarkerView) and specify the layout
         // to use for it
@@ -65,85 +67,93 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
         // mv.setOffsets(-mv.getMeasuredWidth() / 2, -mv.getMeasuredHeight());
 
         // set the marker to the chart
-        mChart.setMarkerView(mv);
+        mBarChart.setMarkerView(mv);
 
-        Typeface tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
+        tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
 
-        Legend l = mChart.getLegend();
+        Legend l = mBarChart.getLegend();
         l.setPosition(LegendPosition.RIGHT_OF_CHART_INSIDE);
         l.setTypeface(tf);
         l.setYOffset(0f);
         l.setYEntrySpace(0f);
         l.setTextSize(8f);
 
-        XAxis xl = mChart.getXAxis();
+        XAxis xl = mBarChart.getXAxis();
         xl.setTypeface(tf);
         xl.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xl.setDrawGridLines(false);
-        xl.setDrawAxisLine(false);
+/*        xl.setDrawGridLines(false);
+        xl.setDrawAxisLine(false);*/
 
-        YAxis leftAxis = mChart.getAxisLeft();
+        YAxis leftAxis = mBarChart.getAxisLeft();
         leftAxis.setTypeface(tf);
         leftAxis.setValueFormatter(new LargeValueFormatter());
         leftAxis.setDrawGridLines(false);
         leftAxis.setSpaceTop(30f);
         leftAxis.setAxisMinValue(0f); // this replaces setStartAtZero(true)
 
-        mChart.getAxisRight().setEnabled(false);
+        mBarChart.getAxisRight().setEnabled(false);
 
-        ArrayList<String> xVals = new ArrayList<>();
+        mBarChart.setData(generateBarData());
+        mBarChart.setVisibleXRange(4 * 7 - 1, 4 * 30 - 1);
+        mBarChart.zoom(NUMBER_OF_DAYS / 7, 1, 0, 0);
+        mBarChart.centerViewTo(mBarChart.getXChartMax(), 0, YAxis.AxisDependency.LEFT);
+    }
+
+    private int getRandom(int range, int startsfrom) {
+        return (int) (Math.random() * range) + startsfrom;
+    }
+
+    private List<String> getXvals() {
+        List<String> xVals = new ArrayList<>();
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             xVals.add((i + 1) + "");
         }
+        return xVals;
+    }
 
-        float mult = NUMBER_OF_DAYS * 10f;
-
-        ArrayList<BarEntry> yVals1 = new ArrayList<>();
+    private List<Entry> getLineEntries() {
+        List<Entry> entries = new ArrayList<>();
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            float val = (float) (Math.random() * mult) + 3;
-            yVals1.add(new BarEntry(val, i));
+            entries.add(new Entry(getRandom(10, 0), i));
         }
+        return entries;
+    }
 
-        ArrayList<BarEntry> yVals2 = new ArrayList<>();
+    private List<BarEntry> getBarEntries() {
+        List<BarEntry> entries = new ArrayList<>();
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            float val = (float) (Math.random() * mult) + 3;
-            yVals2.add(new BarEntry(val, i));
+            entries.add(new BarEntry(getRandom(10, 0), i));
         }
+        return entries;
+    }
 
-        ArrayList<BarEntry> yVals3 = new ArrayList<>();
-        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            float val = (float) (Math.random() * mult) + 3;
-            yVals3.add(new BarEntry(val, i));
-        }
-
-        // create 3 datasets with different types
-        BarDataSet set1 = new BarDataSet(yVals1, "Company A");
+    private List<IBarDataSet> getBarDataSet() {
+        BarDataSet set1 = new BarDataSet(getBarEntries(), "Effort");
         set1.setColor(Color.rgb(104, 241, 175));
-        BarDataSet set2 = new BarDataSet(yVals2, "Company B");
+        BarDataSet set2 = new BarDataSet(getBarEntries(), "Fatigue");
         set2.setColor(Color.rgb(164, 228, 251));
-        BarDataSet set3 = new BarDataSet(yVals3, "Company C");
+        BarDataSet set3 = new BarDataSet(getBarEntries(), "Douleur");
         set3.setColor(Color.rgb(242, 247, 158));
 
-        ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
+        List<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
         dataSets.add(set2);
         dataSets.add(set3);
 
-        BarData data = new BarData(xVals, dataSets);
-//        data.setValueFormatter(new LargeValueFormatter());
+        return dataSets;
+    }
 
-        // add space between the dataset groups in percent of bar-width
+    private BarData generateBarData() {
+        BarData data = new BarData(getXvals(), getBarDataSet());
+        data.setValueFormatter(new LargeValueFormatter());
         data.setGroupSpace(80f);
         data.setValueTypeface(tf);
 
-        mChart.setData(data);
-        mChart.setVisibleXRange(4 * 7 - 1, 4 * 30 - 1);
-        mChart.zoom(NUMBER_OF_DAYS / 7, 1, 0, 0);
-        mChart.centerViewTo(mChart.getXChartMax(), 0, YAxis.AxisDependency.RIGHT);
+        return data;
     }
 
     private void save() {
-        mChart.saveToPath("title" + System.currentTimeMillis(), "");
+        mBarChart.saveToPath("title" + System.currentTimeMillis(), "");
     }
 
     @Override
@@ -156,13 +166,13 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.actionToggleValues: {
-                for (IBarDataSet set : mChart.getData().getDataSets())
+/*            case R.id.actionToggleValues: {
+                for (IBarDataSet set : mBarChart.getData().getDataSets())
                     set.setDrawValues(!set.isDrawValuesEnabled());
 
-                mChart.invalidate();
+                mBarChart.invalidate();
                 break;
-            }
+            }*/
             case R.id.actionSave: {
                 if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                     ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_STORAGE_PERMISSION_CODE);
@@ -174,7 +184,7 @@ public class BarChartActivityMultiDatasetWithPieSwitch extends DemoBase implemen
                 break;
             }
             case R.id.animateY: {
-                mChart.animateY(1000);
+                mBarChart.animateY(1000);
                 break;
             }
         }
