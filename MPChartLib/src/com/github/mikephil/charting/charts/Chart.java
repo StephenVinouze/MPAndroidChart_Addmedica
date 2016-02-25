@@ -1444,7 +1444,6 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param highlighter
      */
     public void setHighlighter(ChartHighlighter highlighter) {
-
         mHighlighter = highlighter;
     }
 
@@ -1453,14 +1452,20 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         return getCenter();
     }
 
+    public Bitmap getChartBitmap() {
+        return getChartBitmap(getWidth(), getHeight());
+    }
+
     /**
      * Returns the bitmap that represents the chart.
      *
-     * @return
+     * @param width The chart width
+     * @param height The chart height
+     * @return The chart bitmap
      */
-    public Bitmap getChartBitmap() {
+    public Bitmap getChartBitmap(int width ,int height) {
         // Define a bitmap with the same size as the view
-        Bitmap returnedBitmap = Bitmap.createBitmap(getWidth(), getHeight(), Bitmap.Config.RGB_565);
+        Bitmap returnedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         // Bind a canvas to it
         Canvas canvas = new Canvas(returnedBitmap);
         // Get the view's background
@@ -1484,15 +1489,35 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * the SD card chart is saved as a PNG image, example:
      * saveToPath("myfilename", "foldername1/foldername2");
      *
-     * @param title
+     * @param title The name of the file
      * @param pathOnSD e.g. "folder1/folder2/folder3"
      * @return returns true on success, false on error
      */
     public boolean saveToPath(String title, String pathOnSD) {
+        return saveToPath(title, pathOnSD, getWidth(), getHeight(), 40);
+    }
 
-        Bitmap b = getChartBitmap();
+    /**
+     * Saves the current chart that is never attached to any view on a given path
+     * This allows you to generate charts "on-the-fly" without attaching them to a view, particularly useful while being managed by a service
+     *
+     * @param title The name of the file
+     * @param pathOnSD e.g. "folder1/folder2/folder3"
+     * @param width The width of the image being generated
+     * @param height The height of the image being generated
+     * @param compression The compression rate of the generated image
+     * @return returns true on success, false on error
+     */
+    public boolean saveUnattachedChartToPath(String title, String pathOnSD, int width, int height, int compression) {
+        getViewPortHandler().setChartDimens(width,height);
+        return saveToPath(title, pathOnSD, width, height, compression);
+    }
 
-        OutputStream stream = null;
+    protected boolean saveToPath(String title, String pathOnSD, int width, int height, int compression) {
+
+        Bitmap b = getChartBitmap(width, height);
+
+        OutputStream stream;
         try {
             stream = new FileOutputStream(Environment.getExternalStorageDirectory().getPath()
                     + pathOnSD + "/" + title
@@ -1502,8 +1527,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
              * Write bitmap to file using JPEG or PNG and 40% quality hint for
              * JPEG.
              */
-            b.compress(CompressFormat.PNG, 40, stream);
-
+            b.compress(CompressFormat.PNG, compression, stream);
             stream.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -1512,6 +1536,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
 
         return true;
     }
+
 
     /**
      * Saves the current state of the chart to the gallery as an image type. The

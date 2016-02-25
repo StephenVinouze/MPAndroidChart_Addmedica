@@ -25,6 +25,7 @@ import com.xxmassdeveloper.mpchartexample.CandleStickChartActivity;
 import com.xxmassdeveloper.mpchartexample.CombinedChartActivity;
 import com.xxmassdeveloper.mpchartexample.CubicLineChartActivity;
 import com.xxmassdeveloper.mpchartexample.DynamicalAddingActivity;
+import com.xxmassdeveloper.mpchartexample.ExportChartActivity;
 import com.xxmassdeveloper.mpchartexample.HorizontalBarChartActivity;
 import com.xxmassdeveloper.mpchartexample.InvertedLineChartActivity;
 import com.xxmassdeveloper.mpchartexample.LineChartActivity1;
@@ -67,8 +68,6 @@ public class MainActivity extends Activity implements OnItemClickListener {
         objects.add(new ContentItem("Line Chart (Dual YAxis)",
                 "Demonstration of the linechart with dual y-axis."));
         objects.add(new ContentItem("Bar Chart", "A simple demonstration of the bar chart."));
-        objects.add(new ContentItem("Multiple Bars Chart with Pie Chart switch",
-                "A bar chart with multiple DataSet objects. One multiple colors per DataSet."));
         objects.add(new ContentItem("Horizontal Bar Chart",
                 "A simple demonstration of the horizontal bar chart."));
         objects.add(new ContentItem("Combined Chart",
@@ -135,6 +134,16 @@ public class MainActivity extends Activity implements OnItemClickListener {
         realm.isNew = true;
         objects.add(realm);
 
+        ContentItem bar_and_line_charts = new ContentItem("Multiple Bars chart with switch in Line chart",
+                "A bar chart with multiple DataSet that switches to line chart after scaling to a defined threshold");
+        bar_and_line_charts.isNew = true;
+        objects.add(bar_and_line_charts);
+
+        ContentItem export_charts = new ContentItem("Export bar charts",
+                "Line charts generated on-the-fly and saved in sdcard but never displayed to the user.");
+        export_charts.isNew = true;
+        objects.add(export_charts);
+
         MyAdapter adapter = new MyAdapter(this, objects);
 
         ListView lv = (ListView) findViewById(R.id.listView1);
@@ -146,126 +155,103 @@ public class MainActivity extends Activity implements OnItemClickListener {
     @Override
     public void onItemClick(AdapterView<?> av, View v, int pos, long arg3) {
 
-        Intent i;
+        Intent i = null;
 
         switch (pos) {
             case 0:
                 i = new Intent(this, LineChartActivity1.class);
-                startActivity(i);
                 break;
             case 1:
                 i = new Intent(this, LineChartActivity2.class);
-                startActivity(i);
                 break;
             case 2:
                 i = new Intent(this, BarChartActivity.class);
-                startActivity(i);
                 break;
             case 3:
-                i = new Intent(this, BarChartActivityMultiDatasetBarLineCombo.class);
-                startActivity(i);
+                i = new Intent(this, HorizontalBarChartActivity.class);
                 break;
             case 4:
                 i = new Intent(this, CombinedChartActivity.class);
-                startActivity(i);
                 break;
             case 5:
                 i = new Intent(this, PieChartActivity.class);
-                startActivity(i);
                 break;
             case 6:
                 i = new Intent(this, ScatterChartActivity.class);
-                startActivity(i);
                 break;
             case 7:
                 i = new Intent(this, BubbleChartActivity.class);
-                startActivity(i);
                 break;
             case 8:
                 i = new Intent(this, StackedBarActivity.class);
-                startActivity(i);
                 break;
             case 9:
                 i = new Intent(this, StackedBarActivityNegative.class);
-                startActivity(i);
                 break;
             case 10:
                 i = new Intent(this, AnotherBarActivity.class);
-                startActivity(i);
                 break;
             case 11:
                 i = new Intent(this, MultiLineChartActivity.class);
-                startActivity(i);
                 break;
             case 12:
                 i = new Intent(this, BarChartActivityMultiDataset.class);
-                startActivity(i);
                 break;
             case 13:
                 i = new Intent(this, SimpleChartDemo.class);
-                startActivity(i);
                 break;
             case 14:
                 i = new Intent(this, ListViewBarChartActivity.class);
-                startActivity(i);
                 break;
             case 15:
                 i = new Intent(this, ListViewMultiChartActivity.class);
-                startActivity(i);
                 break;
             case 16:
                 i = new Intent(this, InvertedLineChartActivity.class);
-                startActivity(i);
                 break;
             case 17:
                 i = new Intent(this, CandleStickChartActivity.class);
-                startActivity(i);
                 break;
             case 18:
                 i = new Intent(this, CubicLineChartActivity.class);
-                startActivity(i);
                 break;
             case 19:
                 i = new Intent(this, RadarChartActivitry.class);
-                startActivity(i);
                 break;
             case 20:
                 i = new Intent(this, LineChartActivityColored.class);
-                startActivity(i);
                 break;
             case 21:
                 i = new Intent(this, RealtimeLineChartActivity.class);
-                startActivity(i);
                 break;
             case 22:
                 i = new Intent(this, DynamicalAddingActivity.class);
-                startActivity(i);
                 break;
             case 23:
                 i = new Intent(this, PerformanceLineChart.class);
-                startActivity(i);
                 break;
             case 24:
                 i = new Intent(this, BarChartActivitySinus.class);
-                startActivity(i);
                 break;
             case 25:
                 i = new Intent(this, ScrollViewActivity.class);
-                startActivity(i);
                 break;
             case 26:
                 i = new Intent(this, BarChartPositiveNegative.class);
-                startActivity(i);
                 break;
             case 27:
                 i = new Intent(this, RealmMainActivity.class);
-                startActivity(i);
                 break;
             case 28:
-                i = new Intent(this, HorizontalBarChartActivity.class);
-                startActivity(i);
+                i = new Intent(this, BarChartActivityMultiDatasetBarLineCombo.class);
+                break;
+            case 29:
+                i = new Intent(this, ExportChartActivity.class);
                 break;
         }
+
+        if (i != null)
+            startActivity(i);
 
         overridePendingTransition(R.anim.move_right_in_activity, R.anim.move_left_out_activity);
     }

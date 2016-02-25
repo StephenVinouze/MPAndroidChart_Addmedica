@@ -253,7 +253,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.bar_with_pie, menu);
+        getMenuInflater().inflate(R.menu.bar_with_line, menu);
         return true;
     }
 

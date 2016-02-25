@@ -31,7 +31,6 @@
         <activity android:name="PieChartActivity"></activity>
         <activity android:name="MultiLineChartActivity"></activity>
         <activity android:name="BarChartActivityMultiDataset"></activity>
-        <activity android:name=".BarChartActivityMultiDatasetBarLineCombo"></activity>
         <activity android:name="DrawChartActivity"></activity>
         <activity android:name="ScatterChartActivity"></activity>
         <activity android:name="BubbleChartActivity"></activity>
@@ -63,6 +62,10 @@
         <activity android:name="StackedBarActivityNegative"></activity>
         <activity android:name=".realm.RealmWikiExample"></activity>
         <activity android:name=".BarChartPositiveNegative"></activity>
+        <activity android:name=".BarChartActivityMultiDatasetBarLineCombo"></activity>
+        <activity android:name=".ExportChartActivity"></activity>
+
+        <service android:name=".services.ExportService"/>
     </application>
 
 </manifest>

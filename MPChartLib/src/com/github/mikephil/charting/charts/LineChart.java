@@ -55,4 +55,5 @@ public class LineChart extends BarLineChartBase<LineData> implements LineDataPro
         }
         super.onDetachedFromWindow();
     }
+
 }
