@@ -164,16 +164,22 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     private LineData generateLineData() {
         LineDataSet set1 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Effort");
-        set1.setColor(ContextCompat.getColor(this, R.color.yellow));
         set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set1.setColor(ContextCompat.getColor(this, R.color.yellow));
+        set1.setCircleColor(ContextCompat.getColor(this, R.color.yellow));
+        set1.setCircleRadius(4f);
 
         LineDataSet set2 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Fatigue");
-        set2.setColor(ContextCompat.getColor(this, R.color.blue));
         set2.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set2.setColor(ContextCompat.getColor(this, R.color.blue));
+        set2.setCircleColor(ContextCompat.getColor(this, R.color.blue));
+        set2.setCircleRadius(4f);
 
         LineDataSet set3 = new LineDataSet(getLineEntries(MAX_PAIN_VALUE), "Douleur");
-        set3.setColor(ContextCompat.getColor(this, R.color.red));
         set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        set3.setColor(ContextCompat.getColor(this, R.color.red));
+        set3.setCircleColor(ContextCompat.getColor(this, R.color.red));
+        set3.setCircleRadius(4f);
 
         List<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
@@ -189,16 +195,16 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     private BarData generateBarData() {
         BarDataSet set1 = new BarDataSet(getBarEntries(MAX_EFFORT_VALUE), "Effort");
-        set1.setColor(ContextCompat.getColor(this, R.color.yellow));
         set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set1.setColor(ContextCompat.getColor(this, R.color.yellow));
 
         BarDataSet set2 = new BarDataSet(getBarEntries(MAX_EFFORT_VALUE), "Fatigue");
-        set2.setColor(ContextCompat.getColor(this, R.color.blue));
         set2.setAxisDependency(YAxis.AxisDependency.LEFT);
+        set2.setColor(ContextCompat.getColor(this, R.color.blue));
 
         BarDataSet set3 = new BarDataSet(getBarEntries(MAX_PAIN_VALUE), "Douleur");
-        set3.setColor(ContextCompat.getColor(this, R.color.red));
         set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        set3.setColor(ContextCompat.getColor(this, R.color.red));
 
         List<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
