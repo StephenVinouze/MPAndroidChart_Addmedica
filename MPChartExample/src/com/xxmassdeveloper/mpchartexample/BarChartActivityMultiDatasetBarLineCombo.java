@@ -212,7 +212,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         dataSets.add(set3);
 
         BarData data = new BarData(getXvals(), dataSets);
-        data.setGroupSpace(80f);
+        data.setGroupSpace(200);
         data.setDrawValues(false);
         data.setValueTextColor(Color.WHITE);
 
