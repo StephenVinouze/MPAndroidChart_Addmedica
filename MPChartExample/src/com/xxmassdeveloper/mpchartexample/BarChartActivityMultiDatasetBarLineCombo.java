@@ -100,6 +100,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         chart.setDrawBorders(false);
         chart.setOnChartGestureListener(this);
         chart.setOnChartValueSelectedListener(this);
+        chart.setBackgroundColor(ContextCompat.getColor(this, R.color.bg));
 
         return chart;
     }
@@ -109,6 +110,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         axis.setPosition(XAxis.XAxisPosition.BOTTOM);
         axis.setDrawGridLines(false);
         axis.setDrawAxisLine(false);
+        axis.setTextColor(Color.WHITE);
     }
 
     private void configureYAxis(YAxis axis, int maxValue) {
@@ -118,16 +120,19 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         axis.setValueFormatter(new LargeValueFormatter());
         axis.setDrawGridLines(dependency == YAxis.AxisDependency.LEFT);
         axis.setDrawZeroLine(dependency == YAxis.AxisDependency.LEFT);
+        axis.setTextColor(dependency == YAxis.AxisDependency.LEFT ? Color.WHITE : ContextCompat.getColor(this, R.color.red));
         axis.setAxisMinValue(0f);
         axis.setAxisMaxValue(maxValue);
     }
 
     private void configureLegend(Legend legend) {
         legend.setPosition(LegendPosition.ABOVE_CHART_RIGHT);
+        legend.setForm(Legend.LegendForm.CIRCLE);
         legend.setTypeface(tf);
         legend.setYOffset(0f);
         legend.setYEntrySpace(0f);
         legend.setXEntrySpace(10f);
+        legend.setTextColor(Color.WHITE);
         legend.setTextSize(15f);
         legend.setFormSize(15f);
     }
@@ -162,15 +167,15 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     private LineData generateLineData() {
         LineDataSet set1 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Effort");
-        set1.setColor(Color.rgb(104, 241, 175));
+        set1.setColor(ContextCompat.getColor(this, R.color.yellow));
         set1.setAxisDependency(YAxis.AxisDependency.LEFT);
 
         LineDataSet set2 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Fatigue");
-        set2.setColor(Color.rgb(164, 228, 251));
+        set2.setColor(ContextCompat.getColor(this, R.color.blue));
         set2.setAxisDependency(YAxis.AxisDependency.LEFT);
 
         LineDataSet set3 = new LineDataSet(getLineEntries(MAX_PAIN_VALUE), "Douleur");
-        set3.setColor(Color.rgb(242, 247, 158));
+        set3.setColor(ContextCompat.getColor(this, R.color.red));
         set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
 
         List<ILineDataSet> dataSets = new ArrayList<>();
@@ -186,15 +191,15 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     private BarData generateBarData() {
         BarDataSet set1 = new BarDataSet(getBarEntries(MAX_EFFORT_VALUE), "Effort");
-        set1.setColor(Color.rgb(104, 241, 175));
+        set1.setColor(ContextCompat.getColor(this, R.color.yellow));
         set1.setAxisDependency(YAxis.AxisDependency.LEFT);
 
         BarDataSet set2 = new BarDataSet(getBarEntries(MAX_EFFORT_VALUE), "Fatigue");
-        set2.setColor(Color.rgb(164, 228, 251));
+        set2.setColor(ContextCompat.getColor(this, R.color.blue));
         set2.setAxisDependency(YAxis.AxisDependency.LEFT);
 
         BarDataSet set3 = new BarDataSet(getBarEntries(MAX_PAIN_VALUE), "Douleur");
-        set3.setColor(Color.rgb(242, 247, 158));
+        set3.setColor(ContextCompat.getColor(this, R.color.red));
         set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
 
         List<IBarDataSet> dataSets = new ArrayList<>();
@@ -215,7 +220,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
             isSwitching = true;
             fromChart.setAlpha(0);
             toChart.bringToFront();
-            toChart.animate().alpha(1).setDuration(500);
+            toChart.setAlpha(1);
             return true;
         }
         return false;
