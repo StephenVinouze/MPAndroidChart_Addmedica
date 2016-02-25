@@ -44,8 +44,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     private static final int WRITE_STORAGE_PERMISSION_CODE = 110;
     private static final int NUMBER_OF_DAYS = 100;
-    private static final int DAYS_PER_MONTH = 30;
-    private static final int DAYS_PER_WEEK = 7;
+    private static final int MINIMUM_VISIBLE_DAYS = 5;
+    private static final int MAXIMUM_VISIBLE_DAYS = 15;
     private static final int SETS = 3;
 
     private static final int MAX_EFFORT_VALUE = 10;
@@ -72,8 +72,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         configureYAxis(mBarChart.getAxisRight(), MAX_PAIN_VALUE);
 
         mBarChart.setData(generateBarData());
-        mBarChart.setVisibleXRange((SETS + 1) * DAYS_PER_WEEK - 1, (SETS + 1) * DAYS_PER_MONTH - 1);
-        mBarChart.zoom(NUMBER_OF_DAYS / DAYS_PER_WEEK, 1, 0, 0);
+        mBarChart.setVisibleXRange((SETS + 1) * MINIMUM_VISIBLE_DAYS - 1, (SETS + 1) * MAXIMUM_VISIBLE_DAYS - 1);
+        mBarChart.zoom(NUMBER_OF_DAYS / MINIMUM_VISIBLE_DAYS, 1, 0, 0);
 
         mLineChart = (LineChart) findViewById(R.id.line_chart);
         configureChart(mLineChart);
@@ -83,8 +83,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         configureYAxis(mLineChart.getAxisRight(), MAX_PAIN_VALUE);
 
         mLineChart.setData(generateLineData());
-        mLineChart.setVisibleXRange(DAYS_PER_MONTH, DAYS_PER_MONTH * 2);
-        mLineChart.zoom(NUMBER_OF_DAYS / DAYS_PER_MONTH, 1, 0, 0);
+        mLineChart.setVisibleXRange(MAXIMUM_VISIBLE_DAYS, MAXIMUM_VISIBLE_DAYS * 2);
+        mLineChart.zoom(NUMBER_OF_DAYS / MAXIMUM_VISIBLE_DAYS, 1, 0, 0);
 
         showBarChart();
 
