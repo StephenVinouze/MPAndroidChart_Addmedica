@@ -2,35 +2,49 @@
 package com.xxmassdeveloper.mpchartexample;
 
 import android.Manifest;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
-import com.xxmassdeveloper.mpchartexample.fragments.ExportChartFragment;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
+import com.xxmassdeveloper.mpchartexample.services.ExportService;
 
 public class ExportChartActivity extends DemoBase {
 
     private static final int WRITE_STORAGE_PERMISSION_CODE = 110;
 
-    private ExportChartFragment exportChartFragment;
+    private ExportService exportService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_export_chart);
+    }
 
-        exportChartFragment = new ExportChartFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.line_chart_container, exportChartFragment).commit();
+    @Override
+    public void onResume() {
+        super.onResume();
+        bindService(new Intent(this, ExportService.class), serviceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onPause() {
+        unbindService(serviceConnection);
+        super.onPause();
     }
 
     private void save() {
-        exportChartFragment.saveChart();
+        exportService.saveChart();
     }
 
     @Override
@@ -67,5 +81,16 @@ public class ExportChartActivity extends DemoBase {
             }
         }
     }
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+
+        public void onServiceConnected(ComponentName className, IBinder binder) {
+            exportService = ((ExportService.ExportBinder) binder).getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            exportService = null;
+        }
+    };
 
 }
