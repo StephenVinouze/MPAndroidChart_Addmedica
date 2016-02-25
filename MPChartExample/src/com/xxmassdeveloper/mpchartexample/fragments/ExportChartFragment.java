@@ -60,7 +60,7 @@ public class ExportChartFragment extends Fragment {
     }
 
     public void saveChart() {
-        mLineChart.saveUnattachedChartToPath("line_chart", "", 800, 500, 50);
+        mLineChart.saveUnattachedChartToPath("line_chart", "", 1800, 1000, 50, ContextCompat.getColor(getActivity(), R.color.bg_light));
     }
 
     @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB)
@@ -70,7 +70,7 @@ public class ExportChartFragment extends Fragment {
         chart.setScaleYEnabled(false);
         chart.setDrawGridBackground(false);
         chart.setDrawBorders(false);
-        chart.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.bg));
+        chart.setBackgroundColor(ContextCompat.getColor(getActivity(), R.color.bg_dark));
 
         configureLegend(chart.getLegend());
         configureXAxis(chart.getXAxis());
@@ -85,7 +85,7 @@ public class ExportChartFragment extends Fragment {
         axis.setPosition(XAxis.XAxisPosition.BOTTOM);
         axis.setDrawGridLines(false);
         axis.setDrawAxisLine(false);
-        axis.setTextColor(Color.WHITE);
+        axis.setTextColor(Color.BLACK);
     }
 
     private void configureYAxis(YAxis axis, int maxValue) {
@@ -95,7 +95,7 @@ public class ExportChartFragment extends Fragment {
         axis.setValueFormatter(new LargeValueFormatter());
         axis.setDrawGridLines(dependency == YAxis.AxisDependency.LEFT);
         axis.setDrawAxisLine(false);
-        axis.setTextColor(dependency == YAxis.AxisDependency.LEFT ? Color.WHITE : ContextCompat.getColor(getActivity(), R.color.red));
+        axis.setTextColor(dependency == YAxis.AxisDependency.LEFT ? Color.BLACK : ContextCompat.getColor(getActivity(), R.color.red));
         axis.setAxisMinValue(0);
         axis.setAxisMaxValue(maxValue);
     }
@@ -107,7 +107,7 @@ public class ExportChartFragment extends Fragment {
         legend.setYOffset(0f);
         legend.setYEntrySpace(0f);
         legend.setXEntrySpace(20f);
-        legend.setTextColor(Color.WHITE);
+        legend.setTextColor(Color.BLACK);
         legend.setTextSize(15f);
         legend.setFormSize(15f);
     }

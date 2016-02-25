@@ -92,7 +92,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         chart.setDrawBorders(false);
         chart.setOnChartGestureListener(this);
         chart.setOnChartValueSelectedListener(this);
-        chart.setBackgroundColor(ContextCompat.getColor(this, R.color.bg));
+        chart.setBackgroundColor(ContextCompat.getColor(this, R.color.bg_dark));
 
         configureLegend(chart.getLegend());
         configureXAxis(chart.getXAxis());

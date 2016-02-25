@@ -1453,7 +1453,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
     }
 
     public Bitmap getChartBitmap() {
-        return getChartBitmap(getWidth(), getHeight());
+        return getChartBitmap(getWidth(), getHeight(), Color.WHITE);
     }
 
     /**
@@ -1463,7 +1463,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param height The chart height
      * @return The chart bitmap
      */
-    public Bitmap getChartBitmap(int width ,int height) {
+    public Bitmap getChartBitmap(int width, int height, int backgroundColor) {
         // Define a bitmap with the same size as the view
         Bitmap returnedBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         // Bind a canvas to it
@@ -1474,9 +1474,8 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
             // has background drawable, then draw it on the canvas
             bgDrawable.draw(canvas);
         else
-            // does not have background drawable, then draw white background on
-            // the canvas
-            canvas.drawColor(Color.WHITE);
+            // does not have background drawable, then draw backgroundColor on Canvas
+            canvas.drawColor(backgroundColor);
         // draw the view on the canvas
         draw(canvas);
         // return the bitmap
@@ -1494,7 +1493,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @return returns true on success, false on error
      */
     public boolean saveToPath(String title, String pathOnSD) {
-        return saveToPath(title, pathOnSD, getWidth(), getHeight(), 40);
+        return saveToPath(title, pathOnSD, getWidth(), getHeight(), 40, Color.WHITE);
     }
 
     /**
@@ -1508,14 +1507,15 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
      * @param compression The compression rate of the generated image
      * @return returns true on success, false on error
      */
-    public boolean saveUnattachedChartToPath(String title, String pathOnSD, int width, int height, int compression) {
+    public boolean saveUnattachedChartToPath(String title, String pathOnSD, int width, int height, int compression, int backgroundColor) {
+        setBackground(null);
         getViewPortHandler().setChartDimens(width,height);
-        return saveToPath(title, pathOnSD, width, height, compression);
+        return saveToPath(title, pathOnSD, width, height, compression, backgroundColor);
     }
 
-    protected boolean saveToPath(String title, String pathOnSD, int width, int height, int compression) {
+    protected boolean saveToPath(String title, String pathOnSD, int width, int height, int compression, int backgroundColor) {
 
-        Bitmap b = getChartBitmap(width, height);
+        Bitmap b = getChartBitmap(width, height, backgroundColor);
 
         OutputStream stream;
         try {
@@ -1536,7 +1536,6 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
 
         return true;
     }
-
 
     /**
      * Saves the current state of the chart to the gallery as an image type. The
