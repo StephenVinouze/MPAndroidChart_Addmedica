@@ -48,6 +48,9 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
     private static final int DAYS_PER_WEEK = 7;
     private static final int SETS = 3;
 
+    private static final int MAX_EFFORT_VALUE = 10;
+    private static final int MAX_PAIN_VALUE = 21;
+
     private BarChart mBarChart;
     private LineChart mLineChart;
     private Typeface tf;
@@ -65,7 +68,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         configureChart(mBarChart);
         configureLegend(mBarChart.getLegend());
         configureXAxis(mBarChart.getXAxis());
-        configureYAxis(mBarChart.getAxisLeft());
+        configureYAxis(mBarChart.getAxisLeft(), MAX_EFFORT_VALUE);
+        configureYAxis(mBarChart.getAxisRight(), MAX_PAIN_VALUE);
 
         mBarChart.setData(generateBarData());
         mBarChart.setVisibleXRange((SETS + 1) * DAYS_PER_WEEK - 1, (SETS + 1) * DAYS_PER_MONTH - 1);
@@ -75,7 +79,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         configureChart(mLineChart);
         configureLegend(mLineChart.getLegend());
         configureXAxis(mLineChart.getXAxis());
-        configureYAxis(mLineChart.getAxisLeft());
+        configureYAxis(mLineChart.getAxisLeft(), MAX_EFFORT_VALUE);
+        configureYAxis(mLineChart.getAxisRight(), MAX_PAIN_VALUE);
 
         mLineChart.setData(generateLineData());
         mLineChart.setVisibleXRange(DAYS_PER_MONTH, DAYS_PER_MONTH * 2);
@@ -93,7 +98,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         chart.setScaleYEnabled(false);
         chart.setDrawGridBackground(false);
         chart.setDrawBorders(false);
-        chart.getAxisRight().setEnabled(false);
         chart.setOnChartGestureListener(this);
         chart.setOnChartValueSelectedListener(this);
 
@@ -107,13 +111,15 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         axis.setDrawAxisLine(false);
     }
 
-    private void configureYAxis(YAxis axis) {
+    private void configureYAxis(YAxis axis, int maxValue) {
+        YAxis.AxisDependency dependency = axis.getAxisDependency();
+
         axis.setTypeface(tf);
         axis.setValueFormatter(new LargeValueFormatter());
-        axis.setDrawGridLines(true);
-        axis.setDrawAxisLine(false);
-        axis.setSpaceTop(30f);
+        axis.setDrawGridLines(dependency == YAxis.AxisDependency.LEFT);
+        axis.setDrawZeroLine(dependency == YAxis.AxisDependency.LEFT);
         axis.setAxisMinValue(0f);
+        axis.setAxisMaxValue(maxValue);
     }
 
     private void configureLegend(Legend legend) {
@@ -138,29 +144,34 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         return xVals;
     }
 
-    private List<Entry> getLineEntries() {
+    private List<Entry> getLineEntries(int maxValue) {
         List<Entry> entries = new ArrayList<>();
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            entries.add(new Entry(getRandom(10, 0), i));
+            entries.add(new Entry(getRandom(maxValue, 0), i));
         }
         return entries;
     }
 
-    private List<BarEntry> getBarEntries() {
+    private List<BarEntry> getBarEntries(int maxValue) {
         List<BarEntry> entries = new ArrayList<>();
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            entries.add(new BarEntry(getRandom(10, 0), i));
+            entries.add(new BarEntry(getRandom(maxValue, 0), i));
         }
         return entries;
     }
 
     private LineData generateLineData() {
-        LineDataSet set1 = new LineDataSet(getLineEntries(), "Effort");
+        LineDataSet set1 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Effort");
         set1.setColor(Color.rgb(104, 241, 175));
-        LineDataSet set2 = new LineDataSet(getLineEntries(), "Fatigue");
+        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        LineDataSet set2 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Fatigue");
         set2.setColor(Color.rgb(164, 228, 251));
-        LineDataSet set3 = new LineDataSet(getLineEntries(), "Douleur");
+        set2.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        LineDataSet set3 = new LineDataSet(getLineEntries(MAX_PAIN_VALUE), "Douleur");
         set3.setColor(Color.rgb(242, 247, 158));
+        set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
 
         List<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
@@ -174,12 +185,17 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
     }
 
     private BarData generateBarData() {
-        BarDataSet set1 = new BarDataSet(getBarEntries(), "Effort");
+        BarDataSet set1 = new BarDataSet(getBarEntries(MAX_EFFORT_VALUE), "Effort");
         set1.setColor(Color.rgb(104, 241, 175));
-        BarDataSet set2 = new BarDataSet(getBarEntries(), "Fatigue");
+        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        BarDataSet set2 = new BarDataSet(getBarEntries(MAX_EFFORT_VALUE), "Fatigue");
         set2.setColor(Color.rgb(164, 228, 251));
-        BarDataSet set3 = new BarDataSet(getBarEntries(), "Douleur");
+        set2.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+        BarDataSet set3 = new BarDataSet(getBarEntries(MAX_PAIN_VALUE), "Douleur");
         set3.setColor(Color.rgb(242, 247, 158));
+        set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
 
         List<IBarDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1);
