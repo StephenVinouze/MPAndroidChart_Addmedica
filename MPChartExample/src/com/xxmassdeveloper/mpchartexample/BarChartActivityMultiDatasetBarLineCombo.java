@@ -116,9 +116,9 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         axis.setTypeface(tf);
         axis.setValueFormatter(new LargeValueFormatter());
         axis.setDrawGridLines(dependency == YAxis.AxisDependency.LEFT);
-        axis.setDrawZeroLine(dependency == YAxis.AxisDependency.LEFT);
+        axis.setDrawAxisLine(false);
         axis.setTextColor(dependency == YAxis.AxisDependency.LEFT ? Color.WHITE : ContextCompat.getColor(this, R.color.red));
-        axis.setAxisMinValue(0f);
+        axis.setAxisMinValue(0);
         axis.setAxisMaxValue(maxValue);
     }
 
@@ -128,7 +128,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         legend.setTypeface(tf);
         legend.setYOffset(0f);
         legend.setYEntrySpace(0f);
-        legend.setXEntrySpace(10f);
+        legend.setXEntrySpace(20f);
         legend.setTextColor(Color.WHITE);
         legend.setTextSize(15f);
         legend.setFormSize(15f);
@@ -187,7 +187,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         dataSets.add(set3);
 
         LineData data = new LineData(getXvals(), dataSets);
-        data.setDrawValues(true);
+        data.setDrawValues(false);
         data.setValueTextColor(Color.WHITE);
 
         return data;
@@ -213,7 +213,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
         BarData data = new BarData(getXvals(), dataSets);
         data.setGroupSpace(80f);
-        data.setDrawValues(true);
+        data.setDrawValues(false);
         data.setValueTextColor(Color.WHITE);
 
         return data;
