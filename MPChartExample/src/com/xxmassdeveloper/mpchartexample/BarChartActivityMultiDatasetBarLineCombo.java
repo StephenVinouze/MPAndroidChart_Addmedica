@@ -66,10 +66,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
         mBarChart = (BarChart) findViewById(R.id.bar_chart);
         configureChart(mBarChart);
-        configureLegend(mBarChart.getLegend());
-        configureXAxis(mBarChart.getXAxis());
-        configureYAxis(mBarChart.getAxisLeft(), MAX_EFFORT_VALUE);
-        configureYAxis(mBarChart.getAxisRight(), MAX_PAIN_VALUE);
 
         mBarChart.setData(generateBarData());
         mBarChart.setVisibleXRange((SETS + 1) * MINIMUM_VISIBLE_DAYS - 1, (SETS + 1) * MAXIMUM_VISIBLE_DAYS - 1);
@@ -77,10 +73,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
         mLineChart = (LineChart) findViewById(R.id.line_chart);
         configureChart(mLineChart);
-        configureLegend(mLineChart.getLegend());
-        configureXAxis(mLineChart.getXAxis());
-        configureYAxis(mLineChart.getAxisLeft(), MAX_EFFORT_VALUE);
-        configureYAxis(mLineChart.getAxisRight(), MAX_PAIN_VALUE);
 
         mLineChart.setData(generateLineData());
         mLineChart.setVisibleXRange(MAXIMUM_VISIBLE_DAYS, MAXIMUM_VISIBLE_DAYS * 2);
@@ -101,6 +93,11 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         chart.setOnChartGestureListener(this);
         chart.setOnChartValueSelectedListener(this);
         chart.setBackgroundColor(ContextCompat.getColor(this, R.color.bg));
+
+        configureLegend(chart.getLegend());
+        configureXAxis(chart.getXAxis());
+        configureYAxis(chart.getAxisLeft(), MAX_EFFORT_VALUE);
+        configureYAxis(chart.getAxisRight(), MAX_PAIN_VALUE);
 
         return chart;
     }
@@ -184,7 +181,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         dataSets.add(set3);
 
         LineData data = new LineData(getXvals(), dataSets);
-        data.setDrawValues(false);
+        data.setDrawValues(true);
+        data.setValueTextColor(Color.WHITE);
 
         return data;
     }
@@ -209,7 +207,8 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
         BarData data = new BarData(getXvals(), dataSets);
         data.setGroupSpace(80f);
-        data.setDrawValues(false);
+        data.setDrawValues(true);
+        data.setValueTextColor(Color.WHITE);
 
         return data;
     }
