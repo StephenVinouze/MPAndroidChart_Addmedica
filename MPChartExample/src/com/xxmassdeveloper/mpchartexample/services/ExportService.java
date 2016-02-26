@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.data.Entry;
@@ -77,16 +78,18 @@ public class ExportService extends Service {
         getBackgroundHandler().post(new Runnable() {
             @Override
             public void run() {
+                Calendar calendar = Calendar.getInstance();
+
                 publishNotification("Export started", true);
 
-                Calendar calendar = Calendar.getInstance();
                 // Generate charts for the last year and save them to sdcard
                 for (int i = 0; i < calendar.getActualMaximum(Calendar.MONTH); i++) {
                     calendar.add(Calendar.MONTH, -i);
 
-                    publishNotification("Generating chart for " + calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()), true);
-
                     int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+                    String monthName = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
+
+                    publishNotification("Generating chart for " + monthName, true);
 
                     List<Entry> lineEffortEntries = new ArrayList<>();
                     List<Entry> lineExhaustionEntries = new ArrayList<>();
@@ -102,11 +105,25 @@ public class ExportService extends Service {
 
                     mLineChart.setData(ChartUtils.generateLineData(ExportService.this, lineEffortEntries, lineExhaustionEntries, linePainEntries, xValues, ChartUtils.ChartMode.LIGHT));
                     mLineChart.invalidate();
-                    mLineChart.saveUnattachedChartToPath("line_chart_" + i, "", 1800, 1000, 50, ContextCompat.getColor(ExportService.this, R.color.bg_light));
+                    if (!mLineChart.saveUnattachedChartToPath("line_chart_" + i, "", 1800, 1000, 50, ContextCompat.getColor(ExportService.this, R.color.bg_light))) {
+                        Toast.makeText(ExportService.this, "Failed to save chart for " + monthName, Toast.LENGTH_SHORT).show();
+                    }
                 }
 
-                // Generate Pdf using the generated charts
-                // Remember to delete charts from sdcard once the Pdf has been generated
+                // TODO: Generate Pdf using the generated charts
+                publishNotification("Generating PDF", true);
+
+/*                // Delete charts from sdcard once the Pdf has been generated
+                for (int i = 0; i < calendar.getActualMaximum(Calendar.MONTH); i++) {
+
+                    String monthName = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
+
+                    publishNotification("Deleting chart for " + monthName, true);
+
+                    if (!mLineChart.deleteFromPath("line_chart_" + i, "")) {
+                        Toast.makeText(ExportService.this, "Failed to save chart for " + monthName, Toast.LENGTH_SHORT).show();
+                    }
+                }*/
 
                 publishNotification("Export finished", false);
             }

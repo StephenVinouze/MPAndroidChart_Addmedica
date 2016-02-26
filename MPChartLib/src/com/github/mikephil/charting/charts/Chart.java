@@ -1482,6 +1482,10 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         return returnedBitmap;
     }
 
+    private String getFilePath(String title, String pathOnSD) {
+        return Environment.getExternalStorageDirectory().getPath() + pathOnSD + "/" + title + ".png";
+    }
+
     /**
      * Saves the current chart state with the given name to the given path on
      * the sdcard leaving the path empty "" will put the saved file directly on
@@ -1519,9 +1523,7 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
 
         OutputStream stream;
         try {
-            stream = new FileOutputStream(Environment.getExternalStorageDirectory().getPath()
-                    + pathOnSD + "/" + title
-                    + ".png");
+            stream = new FileOutputStream(getFilePath(title, pathOnSD));
 
             /*
              * Write bitmap to file using JPEG or PNG and 40% quality hint for
@@ -1535,6 +1537,11 @@ public abstract class Chart<T extends ChartData<? extends IDataSet<? extends Ent
         }
 
         return true;
+    }
+
+    public boolean deleteFromPath(String title, String pathOnSD) {
+        File file = new File(getFilePath(title, pathOnSD));
+        return file.delete();
     }
 
     /**
