@@ -6,7 +6,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -15,17 +14,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
-import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.xxmassdeveloper.mpchartexample.R;
+import com.xxmassdeveloper.mpchartexample.utils.ChartUtils;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,14 +33,12 @@ import java.util.Locale;
  */
 public class ExportService extends Service {
 
-    private static final int DAYS_IN_MONTH = 31;
     private static final int MAX_EFFORT_VALUE = 10;
     private static final int MAX_PAIN_VALUE = 21;
     private static final int NOTIFICATION_ID = 100;
 
     private final IBinder binder = new ExportBinder();
 
-    private Typeface tf;
     private LineChart mLineChart;
 
     private static Handler backgroundHandler;
@@ -62,10 +56,8 @@ public class ExportService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
-
         mLineChart = new LineChart(this);
-        configureChart(mLineChart);
+        ChartUtils.configureChart(mLineChart, ChartUtils.ChartMode.LIGHT, this, null);
     }
 
     @Nullable
@@ -87,7 +79,7 @@ public class ExportService extends Service {
                 publishNotification("Export started", true);
 
                 // Generate charts for the last 6 months and save them to sdcard
-                for (int i = 0; i < 6; i++) {
+                for (int i = 0; i < 12; i++) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.add(Calendar.MONTH, -i);
 
@@ -116,55 +108,6 @@ public class ExportService extends Service {
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
-    }
-
-    @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB)
-    private BarLineChartBase configureChart(BarLineChartBase chart) {
-        chart.setDescription("");
-        chart.setScaleXEnabled(true);
-        chart.setScaleYEnabled(false);
-        chart.setDrawGridBackground(false);
-        chart.setDrawBorders(false);
-        chart.setBackgroundColor(ContextCompat.getColor(this, R.color.bg_dark));
-
-        configureLegend(chart.getLegend());
-        configureXAxis(chart.getXAxis());
-        configureYAxis(chart.getAxisLeft(), MAX_EFFORT_VALUE);
-        configureYAxis(chart.getAxisRight(), MAX_PAIN_VALUE);
-
-        return chart;
-    }
-
-    private void configureXAxis(XAxis axis) {
-        axis.setTypeface(tf);
-        axis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        axis.setDrawGridLines(false);
-        axis.setDrawAxisLine(false);
-        axis.setTextColor(Color.BLACK);
-    }
-
-    private void configureYAxis(YAxis axis, int maxValue) {
-        YAxis.AxisDependency dependency = axis.getAxisDependency();
-
-        axis.setTypeface(tf);
-        axis.setValueFormatter(new LargeValueFormatter());
-        axis.setDrawGridLines(dependency == YAxis.AxisDependency.LEFT);
-        axis.setDrawAxisLine(false);
-        axis.setTextColor(dependency == YAxis.AxisDependency.LEFT ? Color.BLACK : ContextCompat.getColor(this, R.color.red));
-        axis.setAxisMinValue(0);
-        axis.setAxisMaxValue(maxValue);
-    }
-
-    private void configureLegend(Legend legend) {
-        legend.setPosition(Legend.LegendPosition.ABOVE_CHART_RIGHT);
-        legend.setForm(Legend.LegendForm.CIRCLE);
-        legend.setTypeface(tf);
-        legend.setYOffset(0f);
-        legend.setYEntrySpace(0f);
-        legend.setXEntrySpace(20f);
-        legend.setTextColor(Color.BLACK);
-        legend.setTextSize(15f);
-        legend.setFormSize(15f);
     }
 
     private int getRandom(int range, int startsfrom) {

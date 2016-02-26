@@ -5,7 +5,6 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -13,14 +12,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.WindowManager;
 
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.components.Legend.LegendPosition;
-import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
@@ -28,7 +23,6 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
@@ -36,6 +30,7 @@ import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.xxmassdeveloper.mpchartexample.notimportant.DemoBase;
+import com.xxmassdeveloper.mpchartexample.utils.ChartUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,33 +41,28 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
     private static final int NUMBER_OF_DAYS = 100;
     private static final int MINIMUM_VISIBLE_DAYS = 5;
     private static final int MAXIMUM_VISIBLE_DAYS = 15;
-    private static final int SETS = 3;
 
     private static final int MAX_EFFORT_VALUE = 10;
     private static final int MAX_PAIN_VALUE = 21;
 
     private BarChart mBarChart;
     private LineChart mLineChart;
-    private Typeface tf;
     private boolean isSwitching;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_multiset_bar_line_combo);
 
-        tf = Typeface.createFromAsset(getAssets(), "OpenSans-Regular.ttf");
-
         mBarChart = (BarChart) findViewById(R.id.bar_chart);
-        configureChart(mBarChart);
+        ChartUtils.configureChart(mBarChart, ChartUtils.ChartMode.DARK, this, this);
 
         mBarChart.setData(generateBarData());
-        mBarChart.setVisibleXRange((SETS + 1) * MINIMUM_VISIBLE_DAYS - 1, (SETS + 1) * MAXIMUM_VISIBLE_DAYS - 1);
+        mBarChart.setVisibleXRange(ChartUtils.getBarUnitValue(mBarChart) * MINIMUM_VISIBLE_DAYS , ChartUtils.getBarUnitValue(mBarChart) * MAXIMUM_VISIBLE_DAYS);
         mBarChart.zoom(NUMBER_OF_DAYS / MINIMUM_VISIBLE_DAYS, 1, 0, 0);
 
         mLineChart = (LineChart) findViewById(R.id.line_chart);
-        configureChart(mLineChart);
+        ChartUtils.configureChart(mLineChart, ChartUtils.ChartMode.DARK, this, this);
 
         mLineChart.setData(generateLineData());
         mLineChart.setVisibleXRange(MAXIMUM_VISIBLE_DAYS, MAXIMUM_VISIBLE_DAYS * 2);
@@ -81,57 +71,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         showBarChart();
 
         mBarChart.moveViewToX(mBarChart.getXChartMax());
-    }
-
-    @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB)
-    private BarLineChartBase configureChart(BarLineChartBase chart) {
-        chart.setDescription("");
-        chart.setScaleXEnabled(true);
-        chart.setScaleYEnabled(false);
-        chart.setDrawGridBackground(false);
-        chart.setDrawBorders(false);
-        chart.setOnChartGestureListener(this);
-        chart.setOnChartValueSelectedListener(this);
-        chart.setBackgroundColor(ContextCompat.getColor(this, R.color.bg_dark));
-
-        configureLegend(chart.getLegend());
-        configureXAxis(chart.getXAxis());
-        configureYAxis(chart.getAxisLeft(), MAX_EFFORT_VALUE);
-        configureYAxis(chart.getAxisRight(), MAX_PAIN_VALUE);
-
-        return chart;
-    }
-
-    private void configureXAxis(XAxis axis) {
-        axis.setTypeface(tf);
-        axis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        axis.setDrawGridLines(false);
-        axis.setDrawAxisLine(false);
-        axis.setTextColor(Color.WHITE);
-    }
-
-    private void configureYAxis(YAxis axis, int maxValue) {
-        YAxis.AxisDependency dependency = axis.getAxisDependency();
-
-        axis.setTypeface(tf);
-        axis.setValueFormatter(new LargeValueFormatter());
-        axis.setDrawGridLines(dependency == YAxis.AxisDependency.LEFT);
-        axis.setDrawAxisLine(false);
-        axis.setTextColor(dependency == YAxis.AxisDependency.LEFT ? Color.WHITE : ContextCompat.getColor(this, R.color.red));
-        axis.setAxisMinValue(0);
-        axis.setAxisMaxValue(maxValue);
-    }
-
-    private void configureLegend(Legend legend) {
-        legend.setPosition(LegendPosition.ABOVE_CHART_RIGHT);
-        legend.setForm(Legend.LegendForm.CIRCLE);
-        legend.setTypeface(tf);
-        legend.setYOffset(0f);
-        legend.setYEntrySpace(0f);
-        legend.setXEntrySpace(20f);
-        legend.setTextColor(Color.WHITE);
-        legend.setTextSize(15f);
-        legend.setFormSize(15f);
     }
 
     private int getRandom(int range, int startsfrom) {
@@ -233,7 +172,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
     private void showBarChart() {
         if (switchChart(mLineChart, mBarChart)) {
-            mBarChart.moveViewToX((SETS + 1) * mLineChart.getLowestVisibleXIndex() - 1);
+            mBarChart.moveViewToX(ChartUtils.getBarUnitValue(mBarChart) * mLineChart.getLowestVisibleXIndex());
             mBarChart.animateY(500);
             isSwitching = false;
         }
