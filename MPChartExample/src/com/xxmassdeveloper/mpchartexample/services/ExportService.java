@@ -1,8 +1,10 @@
 package com.xxmassdeveloper.mpchartexample.services;
 
 import android.annotation.TargetApi;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Binder;
@@ -10,6 +12,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.BarLineChartBase;
@@ -27,6 +30,7 @@ import com.xxmassdeveloper.mpchartexample.R;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by stephenvinouze on 25/02/16.
@@ -36,6 +40,7 @@ public class ExportService extends Service {
     private static final int DAYS_IN_MONTH = 31;
     private static final int MAX_EFFORT_VALUE = 10;
     private static final int MAX_PAIN_VALUE = 21;
+    private static final int NOTIFICATION_ID = 100;
 
     private final IBinder binder = new ExportBinder();
 
@@ -74,14 +79,19 @@ public class ExportService extends Service {
         return START_STICKY;
     }
 
+    @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB)
     public void exportToPdf() {
         getBackgroundHandler().post(new Runnable() {
             @Override
             public void run() {
+                publishNotification("Export started", true);
+
                 // Generate charts for the last 6 months and save them to sdcard
                 for (int i = 0; i < 6; i++) {
                     Calendar calendar = Calendar.getInstance();
                     calendar.add(Calendar.MONTH, -i);
+
+                    publishNotification("Generating chart for " + calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()), true);
 
                     mLineChart.setData(generateLineData(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)));
                     mLineChart.invalidate();
@@ -90,8 +100,22 @@ public class ExportService extends Service {
 
                 // Generate Pdf using the generated charts
                 // Remember to delete charts from sdcard once the Pdf has been generated
+
+                publishNotification("Export finished", false);
             }
         });
+    }
+
+    private void publishNotification(String message, boolean onGoing) {
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(ExportService.this)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
+                .setOngoing(onGoing)
+                .setContentTitle("Exporting to PDF")
+                .setContentText(message);
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
     }
 
     @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB)

@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:gravity="center"
-        android:text="This is a simple view that present underneath it a line chart that will be hidden by this text and be used only for generation purposes in order to extract these line charts and display them in a generated PDF"
+        android:text="Simple activity with export action in overflow menu"
         android:textSize="25sp"/>
 
 </RelativeLayout>
