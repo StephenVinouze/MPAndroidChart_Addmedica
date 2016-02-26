@@ -5,7 +5,6 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.os.Binder;
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -15,11 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.xxmassdeveloper.mpchartexample.R;
 import com.xxmassdeveloper.mpchartexample.utils.ChartUtils;
 
@@ -39,7 +34,11 @@ public class ExportService extends Service {
 
     private final IBinder binder = new ExportBinder();
 
-    private LineChart mLineChart;
+    public class ExportBinder extends Binder {
+        public ExportService getService() {
+            return ExportService.this;
+        }
+    }
 
     private static Handler backgroundHandler;
 
@@ -51,6 +50,8 @@ public class ExportService extends Service {
         }
         return backgroundHandler;
     }
+
+    private LineChart mLineChart;
 
     @Override
     public void onCreate() {
@@ -78,14 +79,21 @@ public class ExportService extends Service {
             public void run() {
                 publishNotification("Export started", true);
 
-                // Generate charts for the last 6 months and save them to sdcard
-                for (int i = 0; i < 12; i++) {
-                    Calendar calendar = Calendar.getInstance();
+                Calendar calendar = Calendar.getInstance();
+                // Generate charts for the last year and save them to sdcard
+                for (int i = 0; i < calendar.getActualMaximum(Calendar.MONTH); i++) {
                     calendar.add(Calendar.MONTH, -i);
 
                     publishNotification("Generating chart for " + calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault()), true);
 
-                    mLineChart.setData(generateLineData(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)));
+                    int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+
+                    mLineChart.setData(ChartUtils.generateLineData(ExportService.this,
+                            getLineEntries(MAX_EFFORT_VALUE, daysInMonth),
+                            getLineEntries(MAX_EFFORT_VALUE, daysInMonth),
+                            getLineEntries(MAX_PAIN_VALUE, daysInMonth),
+                            getXvals(daysInMonth),
+                            ChartUtils.ChartMode.LIGHT));
                     mLineChart.invalidate();
                     mLineChart.saveUnattachedChartToPath("line_chart_" + i, "", 1800, 1000, 50, ContextCompat.getColor(ExportService.this, R.color.bg_light));
                 }
@@ -128,43 +136,6 @@ public class ExportService extends Service {
             entries.add(new Entry(getRandom(maxValue, 0), i));
         }
         return entries;
-    }
-
-    private LineData generateLineData(int dayInMonth) {
-        LineDataSet set1 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE, dayInMonth), "Effort");
-        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set1.setColor(ContextCompat.getColor(this, R.color.yellow));
-        set1.setCircleColor(ContextCompat.getColor(this, R.color.yellow));
-        set1.setCircleRadius(4f);
-
-        LineDataSet set2 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE, dayInMonth), "Fatigue");
-        set2.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set2.setColor(ContextCompat.getColor(this, R.color.blue));
-        set2.setCircleColor(ContextCompat.getColor(this, R.color.blue));
-        set2.setCircleRadius(4f);
-
-        LineDataSet set3 = new LineDataSet(getLineEntries(MAX_PAIN_VALUE, dayInMonth), "Douleur");
-        set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        set3.setColor(ContextCompat.getColor(this, R.color.red));
-        set3.setCircleColor(ContextCompat.getColor(this, R.color.red));
-        set3.setCircleRadius(4f);
-
-        List<ILineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(set1);
-        dataSets.add(set2);
-        dataSets.add(set3);
-
-        LineData data = new LineData(getXvals(dayInMonth), dataSets);
-        data.setDrawValues(false);
-        data.setValueTextColor(Color.BLACK);
-
-        return data;
-    }
-
-    public class ExportBinder extends Binder {
-        public ExportService getService() {
-            return ExportService.this;
-        }
     }
 
 }

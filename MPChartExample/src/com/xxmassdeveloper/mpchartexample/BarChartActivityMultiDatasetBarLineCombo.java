@@ -4,7 +4,6 @@ package com.xxmassdeveloper.mpchartexample;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -16,16 +15,10 @@ import android.view.MotionEvent;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.BarLineChartBase;
 import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -57,14 +50,14 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         mBarChart = (BarChart) findViewById(R.id.bar_chart);
         ChartUtils.configureChart(mBarChart, ChartUtils.ChartMode.DARK, this, this);
 
-        mBarChart.setData(generateBarData());
+        mBarChart.setData(ChartUtils.generateBarData(this, getBarEntries(MAX_EFFORT_VALUE), getBarEntries(MAX_EFFORT_VALUE), getBarEntries(MAX_PAIN_VALUE), getXvals(), ChartUtils.ChartMode.DARK));
         mBarChart.setVisibleXRange(ChartUtils.getBarUnitValue(mBarChart) * MINIMUM_VISIBLE_DAYS , ChartUtils.getBarUnitValue(mBarChart) * MAXIMUM_VISIBLE_DAYS);
         mBarChart.zoom(NUMBER_OF_DAYS / MINIMUM_VISIBLE_DAYS, 1, 0, 0);
 
         mLineChart = (LineChart) findViewById(R.id.line_chart);
         ChartUtils.configureChart(mLineChart, ChartUtils.ChartMode.DARK, this, this);
 
-        mLineChart.setData(generateLineData());
+        mLineChart.setData(ChartUtils.generateLineData(this, getLineEntries(MAX_EFFORT_VALUE), getLineEntries(MAX_EFFORT_VALUE), getLineEntries(MAX_PAIN_VALUE), getXvals(), ChartUtils.ChartMode.DARK));
         mLineChart.setVisibleXRange(MAXIMUM_VISIBLE_DAYS, MAXIMUM_VISIBLE_DAYS * 2);
         mLineChart.zoom(NUMBER_OF_DAYS / MAXIMUM_VISIBLE_DAYS, 1, 0, 0);
 
@@ -80,7 +73,7 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
     private List<String> getXvals() {
         List<String> xVals = new ArrayList<>();
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            xVals.add((i + 1) + "");
+            xVals.add(String.format("%02d", i + 1));
         }
         return xVals;
     }
@@ -99,63 +92,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
             entries.add(new BarEntry(getRandom(maxValue, 0), i));
         }
         return entries;
-    }
-
-    private LineData generateLineData() {
-        LineDataSet set1 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Effort");
-        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set1.setColor(ContextCompat.getColor(this, R.color.yellow));
-        set1.setCircleColor(ContextCompat.getColor(this, R.color.yellow));
-        set1.setCircleRadius(4f);
-
-        LineDataSet set2 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Fatigue");
-        set2.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set2.setColor(ContextCompat.getColor(this, R.color.blue));
-        set2.setCircleColor(ContextCompat.getColor(this, R.color.blue));
-        set2.setCircleRadius(4f);
-
-        LineDataSet set3 = new LineDataSet(getLineEntries(MAX_PAIN_VALUE), "Douleur");
-        set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        set3.setColor(ContextCompat.getColor(this, R.color.red));
-        set3.setCircleColor(ContextCompat.getColor(this, R.color.red));
-        set3.setCircleRadius(4f);
-
-        List<ILineDataSet> dataSets = new ArrayList<>();
-        dataSets.add(set1);
-        dataSets.add(set2);
-        dataSets.add(set3);
-
-        LineData data = new LineData(getXvals(), dataSets);
-        data.setDrawValues(false);
-        data.setValueTextColor(Color.WHITE);
-
-        return data;
-    }
-
-    private BarData generateBarData() {
-        BarDataSet set1 = new BarDataSet(getBarEntries(MAX_EFFORT_VALUE), "Effort");
-        set1.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set1.setColor(ContextCompat.getColor(this, R.color.yellow));
-
-        BarDataSet set2 = new BarDataSet(getBarEntries(MAX_EFFORT_VALUE), "Fatigue");
-        set2.setAxisDependency(YAxis.AxisDependency.LEFT);
-        set2.setColor(ContextCompat.getColor(this, R.color.blue));
-
-        BarDataSet set3 = new BarDataSet(getBarEntries(MAX_PAIN_VALUE), "Douleur");
-        set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
-        set3.setColor(ContextCompat.getColor(this, R.color.red));
-
-        List<IBarDataSet> dataSets = new ArrayList<>();
-        dataSets.add(set1);
-        dataSets.add(set2);
-        dataSets.add(set3);
-
-        BarData data = new BarData(getXvals(), dataSets);
-        data.setGroupSpace(200);
-        data.setDrawValues(false);
-        data.setValueTextColor(Color.WHITE);
-
-        return data;
     }
 
     @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB_MR1)
