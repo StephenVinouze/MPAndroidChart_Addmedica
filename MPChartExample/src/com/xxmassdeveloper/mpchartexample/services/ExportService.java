@@ -80,7 +80,7 @@ public class ExportService extends Service {
             public void run() {
                 Calendar calendar = Calendar.getInstance();
 
-                publishNotification("Export started", true);
+                publishNotification("Export started");
 
                 // Generate charts for the last year and save them to sdcard
                 for (int i = 0; i < calendar.getActualMaximum(Calendar.MONTH); i++) {
@@ -89,7 +89,7 @@ public class ExportService extends Service {
                     int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
                     String monthName = calendar.getDisplayName(Calendar.MONTH, Calendar.LONG, Locale.getDefault());
 
-                    publishNotification("Generating chart for " + monthName, true);
+                    publishNotification("Generating chart for " + monthName);
 
                     List<Entry> lineEffortEntries = new ArrayList<>();
                     List<Entry> lineExhaustionEntries = new ArrayList<>();
@@ -111,7 +111,7 @@ public class ExportService extends Service {
                 }
 
                 // TODO: Generate Pdf using the generated charts
-                publishNotification("Generating PDF", true);
+                publishNotification("Generating PDF");
 
 /*                // Delete charts from sdcard once the Pdf has been generated
                 for (int i = 0; i < calendar.getActualMaximum(Calendar.MONTH); i++) {
@@ -125,16 +125,17 @@ public class ExportService extends Service {
                     }
                 }*/
 
-                publishNotification("Export finished", false);
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.cancel(NOTIFICATION_ID);
             }
         });
     }
 
-    private void publishNotification(String message, boolean onGoing) {
+    private void publishNotification(String message) {
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(ExportService.this)
+                .setAutoCancel(true)
                 .setSmallIcon(R.drawable.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher))
-                .setOngoing(onGoing)
                 .setContentTitle("Exporting to PDF")
                 .setContentText(message);
 
