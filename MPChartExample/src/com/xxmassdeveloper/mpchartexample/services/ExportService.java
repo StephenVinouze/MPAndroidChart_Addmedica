@@ -25,6 +25,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.xxmassdeveloper.mpchartexample.R;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -32,23 +33,20 @@ import java.util.List;
  */
 public class ExportService extends Service {
 
-    private static final int NUMBER_OF_DAYS = 100;
-    private static final int MINIMUM_VISIBLE_DAYS = 5;
-    private static final int MAXIMUM_VISIBLE_DAYS = 15;
-
+    private static final int DAYS_IN_MONTH = 31;
     private static final int MAX_EFFORT_VALUE = 10;
     private static final int MAX_PAIN_VALUE = 21;
 
     private final IBinder binder = new ExportBinder();
 
-    private LineChart mLineChart;
     private Typeface tf;
+    private LineChart mLineChart;
 
     private static Handler backgroundHandler;
 
     public static Handler getBackgroundHandler() {
         if (backgroundHandler == null) {
-            HandlerThread printerThread = new HandlerThread("PrinterThread");
+            HandlerThread printerThread = new HandlerThread("ExportThread");
             printerThread.start();
             backgroundHandler = new Handler(printerThread.getLooper());
         }
@@ -63,10 +61,6 @@ public class ExportService extends Service {
 
         mLineChart = new LineChart(this);
         configureChart(mLineChart);
-
-        mLineChart.setData(generateLineData());
-        mLineChart.setVisibleXRange(MAXIMUM_VISIBLE_DAYS, MAXIMUM_VISIBLE_DAYS * 2);
-        mLineChart.zoom(NUMBER_OF_DAYS / MAXIMUM_VISIBLE_DAYS, 1, 0, 0);
     }
 
     @Nullable
@@ -80,8 +74,24 @@ public class ExportService extends Service {
         return START_STICKY;
     }
 
-    public void saveChart() {
-        mLineChart.saveUnattachedChartToPath("line_chart", "", 1800, 1000, 50, ContextCompat.getColor(this, R.color.red));
+    public void exportToPdf() {
+        getBackgroundHandler().post(new Runnable() {
+            @Override
+            public void run() {
+                // Generate charts for the last 6 months and save them to sdcard
+                for (int i = 0; i < 6; i++) {
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.add(Calendar.MONTH, -i);
+
+                    mLineChart.setData(generateLineData(calendar.getActualMaximum(Calendar.DAY_OF_MONTH)));
+                    mLineChart.invalidate();
+                    mLineChart.saveUnattachedChartToPath("line_chart_" + i, "", 1800, 1000, 50, ContextCompat.getColor(ExportService.this, R.color.bg_light));
+                }
+
+                // Generate Pdf using the generated charts
+                // Remember to delete charts from sdcard once the Pdf has been generated
+            }
+        });
     }
 
     @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB)
@@ -137,36 +147,36 @@ public class ExportService extends Service {
         return (int) (Math.random() * range) + startsfrom;
     }
 
-    private List<String> getXvals() {
+    private List<String> getXvals(int dayInMonth) {
         List<String> xVals = new ArrayList<>();
-        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            xVals.add((i + 1) + "");
+        for (int i = 0; i < dayInMonth; i++) {
+            xVals.add(String.format("%02d", i + 1));
         }
         return xVals;
     }
 
-    private List<Entry> getLineEntries(int maxValue) {
+    private List<Entry> getLineEntries(int maxValue, int dayInMonth) {
         List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
+        for (int i = 0; i < dayInMonth; i++) {
             entries.add(new Entry(getRandom(maxValue, 0), i));
         }
         return entries;
     }
 
-    private LineData generateLineData() {
-        LineDataSet set1 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Effort");
+    private LineData generateLineData(int dayInMonth) {
+        LineDataSet set1 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE, dayInMonth), "Effort");
         set1.setAxisDependency(YAxis.AxisDependency.LEFT);
         set1.setColor(ContextCompat.getColor(this, R.color.yellow));
         set1.setCircleColor(ContextCompat.getColor(this, R.color.yellow));
         set1.setCircleRadius(4f);
 
-        LineDataSet set2 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE), "Fatigue");
+        LineDataSet set2 = new LineDataSet(getLineEntries(MAX_EFFORT_VALUE, dayInMonth), "Fatigue");
         set2.setAxisDependency(YAxis.AxisDependency.LEFT);
         set2.setColor(ContextCompat.getColor(this, R.color.blue));
         set2.setCircleColor(ContextCompat.getColor(this, R.color.blue));
         set2.setCircleRadius(4f);
 
-        LineDataSet set3 = new LineDataSet(getLineEntries(MAX_PAIN_VALUE), "Douleur");
+        LineDataSet set3 = new LineDataSet(getLineEntries(MAX_PAIN_VALUE, dayInMonth), "Douleur");
         set3.setAxisDependency(YAxis.AxisDependency.RIGHT);
         set3.setColor(ContextCompat.getColor(this, R.color.red));
         set3.setCircleColor(ContextCompat.getColor(this, R.color.red));
@@ -177,9 +187,9 @@ public class ExportService extends Service {
         dataSets.add(set2);
         dataSets.add(set3);
 
-        LineData data = new LineData(getXvals(), dataSets);
+        LineData data = new LineData(getXvals(dayInMonth), dataSets);
         data.setDrawValues(false);
-        data.setValueTextColor(Color.WHITE);
+        data.setValueTextColor(Color.BLACK);
 
         return data;
     }

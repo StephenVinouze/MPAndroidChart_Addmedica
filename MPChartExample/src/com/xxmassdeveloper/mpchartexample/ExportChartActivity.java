@@ -44,7 +44,7 @@ public class ExportChartActivity extends DemoBase {
     }
 
     private void save() {
-        exportService.saveChart();
+        exportService.exportToPdf();
     }
 
     @Override
