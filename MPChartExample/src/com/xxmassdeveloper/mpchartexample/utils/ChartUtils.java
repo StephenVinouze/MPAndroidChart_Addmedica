@@ -90,6 +90,10 @@ public class ChartUtils {
         return data;
     }
 
+    public static int getRandom(int minValue, int maxValue) {
+        return (int) (Math.random() * maxValue) + minValue;
+    }
+
     public static BarData generateBarData(Context context, List<BarEntry> barEntries1, List<BarEntry> barEntries2, List<BarEntry> barEntries3, List<String> xValues, ChartMode chartMode) {
         BarDataSet set1 = new BarDataSet(barEntries1, "Effort");
         set1.setAxisDependency(YAxis.AxisDependency.LEFT);

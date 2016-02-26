@@ -50,48 +50,43 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         mBarChart = (BarChart) findViewById(R.id.bar_chart);
         ChartUtils.configureChart(mBarChart, ChartUtils.ChartMode.DARK, this, this);
 
-        mBarChart.setData(ChartUtils.generateBarData(this, getBarEntries(MAX_EFFORT_VALUE), getBarEntries(MAX_EFFORT_VALUE), getBarEntries(MAX_PAIN_VALUE), getXvals(), ChartUtils.ChartMode.DARK));
+        List<Entry> lineEffortEntries = new ArrayList<>();
+        List<Entry> lineExhaustionEntries = new ArrayList<>();
+        List<Entry> linePainEntries = new ArrayList<>();
+        List<BarEntry> barEffortEntries = new ArrayList<>();
+        List<BarEntry> barExhaustionEntries = new ArrayList<>();
+        List<BarEntry> barPainEntries = new ArrayList<>();
+        List<String> xValues = new ArrayList<>();
+        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
+            int effortValue = ChartUtils.getRandom(0, MAX_EFFORT_VALUE);
+            int exhaustionValue = ChartUtils.getRandom(0, MAX_EFFORT_VALUE);
+            int painValue = ChartUtils.getRandom(0, MAX_PAIN_VALUE);
+
+            lineEffortEntries.add(new Entry(effortValue, i));
+            lineExhaustionEntries.add(new Entry(exhaustionValue, i));
+            linePainEntries.add(new Entry(painValue, i));
+
+            barEffortEntries.add(new BarEntry(effortValue, i));
+            barExhaustionEntries.add(new BarEntry(exhaustionValue, i));
+            barPainEntries.add(new BarEntry(painValue, i));
+
+            xValues.add(String.format("%02d", i + 1));
+        }
+
+        mBarChart.setData(ChartUtils.generateBarData(this, barEffortEntries, barExhaustionEntries, barPainEntries, xValues, ChartUtils.ChartMode.DARK));
         mBarChart.setVisibleXRange(ChartUtils.getBarUnitValue(mBarChart) * MINIMUM_VISIBLE_DAYS , ChartUtils.getBarUnitValue(mBarChart) * MAXIMUM_VISIBLE_DAYS);
         mBarChart.zoom(NUMBER_OF_DAYS / MINIMUM_VISIBLE_DAYS, 1, 0, 0);
 
         mLineChart = (LineChart) findViewById(R.id.line_chart);
         ChartUtils.configureChart(mLineChart, ChartUtils.ChartMode.DARK, this, this);
 
-        mLineChart.setData(ChartUtils.generateLineData(this, getLineEntries(MAX_EFFORT_VALUE), getLineEntries(MAX_EFFORT_VALUE), getLineEntries(MAX_PAIN_VALUE), getXvals(), ChartUtils.ChartMode.DARK));
+        mLineChart.setData(ChartUtils.generateLineData(this, lineEffortEntries, lineExhaustionEntries, linePainEntries, xValues, ChartUtils.ChartMode.DARK));
         mLineChart.setVisibleXRange(MAXIMUM_VISIBLE_DAYS, MAXIMUM_VISIBLE_DAYS * 2);
         mLineChart.zoom(NUMBER_OF_DAYS / MAXIMUM_VISIBLE_DAYS, 1, 0, 0);
 
         showBarChart();
 
         mBarChart.moveViewToX(mBarChart.getXChartMax());
-    }
-
-    private int getRandom(int range, int startsfrom) {
-        return (int) (Math.random() * range) + startsfrom;
-    }
-
-    private List<String> getXvals() {
-        List<String> xVals = new ArrayList<>();
-        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            xVals.add(String.format("%02d", i + 1));
-        }
-        return xVals;
-    }
-
-    private List<Entry> getLineEntries(int maxValue) {
-        List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            entries.add(new Entry(getRandom(maxValue, 0), i));
-        }
-        return entries;
-    }
-
-    private List<BarEntry> getBarEntries(int maxValue) {
-        List<BarEntry> entries = new ArrayList<>();
-        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            entries.add(new BarEntry(getRandom(maxValue, 0), i));
-        }
-        return entries;
     }
 
     @TargetApi(android.os.Build.VERSION_CODES.HONEYCOMB_MR1)

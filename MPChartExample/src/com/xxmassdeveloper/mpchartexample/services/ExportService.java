@@ -88,12 +88,19 @@ public class ExportService extends Service {
 
                     int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-                    mLineChart.setData(ChartUtils.generateLineData(ExportService.this,
-                            getLineEntries(MAX_EFFORT_VALUE, daysInMonth),
-                            getLineEntries(MAX_EFFORT_VALUE, daysInMonth),
-                            getLineEntries(MAX_PAIN_VALUE, daysInMonth),
-                            getXvals(daysInMonth),
-                            ChartUtils.ChartMode.LIGHT));
+                    List<Entry> lineEffortEntries = new ArrayList<>();
+                    List<Entry> lineExhaustionEntries = new ArrayList<>();
+                    List<Entry> linePainEntries = new ArrayList<>();
+                    List<String> xValues = new ArrayList<>();
+                    for (int j = 0; j < daysInMonth; j++) {
+                        lineEffortEntries.add(new Entry(ChartUtils.getRandom(0, MAX_EFFORT_VALUE), j));
+                        lineExhaustionEntries.add(new Entry(ChartUtils.getRandom(0, MAX_EFFORT_VALUE), j));
+                        linePainEntries.add(new Entry(ChartUtils.getRandom(0, MAX_PAIN_VALUE), j));
+
+                        xValues.add(String.format("%02d", j + 1));
+                    }
+
+                    mLineChart.setData(ChartUtils.generateLineData(ExportService.this, lineEffortEntries, lineExhaustionEntries, linePainEntries, xValues, ChartUtils.ChartMode.LIGHT));
                     mLineChart.invalidate();
                     mLineChart.saveUnattachedChartToPath("line_chart_" + i, "", 1800, 1000, 50, ContextCompat.getColor(ExportService.this, R.color.bg_light));
                 }
@@ -116,26 +123,6 @@ public class ExportService extends Service {
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(NOTIFICATION_ID, notificationBuilder.build());
-    }
-
-    private int getRandom(int range, int startsfrom) {
-        return (int) (Math.random() * range) + startsfrom;
-    }
-
-    private List<String> getXvals(int dayInMonth) {
-        List<String> xVals = new ArrayList<>();
-        for (int i = 0; i < dayInMonth; i++) {
-            xVals.add(String.format("%02d", i + 1));
-        }
-        return xVals;
-    }
-
-    private List<Entry> getLineEntries(int maxValue, int dayInMonth) {
-        List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < dayInMonth; i++) {
-            entries.add(new Entry(getRandom(maxValue, 0), i));
-        }
-        return entries;
     }
 
 }
