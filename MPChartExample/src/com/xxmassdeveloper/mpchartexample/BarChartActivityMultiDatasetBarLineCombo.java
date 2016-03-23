@@ -47,9 +47,6 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_multiset_bar_line_combo);
 
-        mBarChart = (BarChart) findViewById(R.id.bar_chart);
-        ChartUtils.configureChart(mBarChart, ChartUtils.ChartMode.DARK, this, this);
-
         List<Entry> lineEffortEntries = new ArrayList<>();
         List<Entry> lineExhaustionEntries = new ArrayList<>();
         List<Entry> linePainEntries = new ArrayList<>();
@@ -72,6 +69,9 @@ public class BarChartActivityMultiDatasetBarLineCombo extends DemoBase implement
 
             xValues.add(String.format("%02d", i + 1));
         }
+
+        mBarChart = (BarChart) findViewById(R.id.bar_chart);
+        ChartUtils.configureChart(mBarChart, ChartUtils.ChartMode.DARK, this, this);
 
         mBarChart.setData(ChartUtils.generateBarData(this, barEffortEntries, barExhaustionEntries, barPainEntries, xValues, ChartUtils.ChartMode.DARK));
         mBarChart.setVisibleXRange(ChartUtils.getBarUnitValue(mBarChart) * MINIMUM_VISIBLE_DAYS , ChartUtils.getBarUnitValue(mBarChart) * MAXIMUM_VISIBLE_DAYS);

@@ -37,3 +37,6 @@ build/
 
 # maven
 target/
+
+# macos
+.DS_Store
